@@ -1,0 +1,102 @@
+/* About Me Module */
+.aboutGrid {
+    display: flex;
+    align-items: flex-start;
+    gap: 40px;
+}
+
+.profilePortraitWrap {
+    flex: 0 0 280px;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+    background: #0f172a;
+    text-align: center;
+}
+
+.profilePortraitImg {
+    width: 100%;
+    height: 280px;
+    object-fit: cover;
+    object-position: top center;
+    display: block;
+}
+
+.pfpNote {
+    font-size: 0.75rem;
+    color: #94a3b8;
+    font-style: italic;
+    padding: 6px 10px;
+    background-color: #1e293b;
+}
+
+.aboutContent {
+    flex: 1;
+}
+
+.aboutHeadline {
+    font-family: var(--font-heading);
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--text-heading);
+    margin-bottom: 12px;
+}
+
+.aboutIntro {
+    font-size: 0.95rem;
+    color: var(--text-main);
+    margin-bottom: 14px;
+    line-height: 1.65;
+}
+
+.aboutBulletList {
+    list-style: none;
+    margin-top: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.aboutBulletList li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.92rem;
+    color: var(--text-main);
+}
+
+.aboutBulletList li strong {
+    color: var(--text-heading);
+}
+
+.listIcon {
+    font-size: 1rem;
+    color: var(--accent-blue);
+    width: 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+/* Responsive adjustment for tablets & mobile */
+@media (max-width: 880px) {
+    .aboutGrid {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .profilePortraitWrap {
+        flex: 0 0 auto;
+        width: 190px;
+    }
+
+    .profilePortraitImg {
+        height: 190px;
+    }
+
+    .aboutBulletList li {
+        justify-content: center;
+    }
+}

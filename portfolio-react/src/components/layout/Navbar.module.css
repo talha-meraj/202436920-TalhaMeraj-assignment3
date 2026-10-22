@@ -1,0 +1,158 @@
+/* Navigation Bar Module */
+.navTabContainer {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: var(--shadow-md);
+}
+
+.navBar {
+    display: flex;
+    align-items: stretch;
+    justify-content: space-between;
+    background-color: var(--nav-bg);
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    min-height: 54px;
+    transition: var(--theme-transition);
+}
+
+.navLinks {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    align-items: stretch;
+}
+
+.navLinks li {
+    display: flex;
+    align-items: stretch;
+}
+
+.navItem {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px 28px;
+    color: #ffffff;
+    font-family: var(--font-heading);
+    font-size: 0.85rem;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    text-decoration: none;
+    background-color: transparent;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    user-select: none;
+    position: relative;
+}
+
+.navItem:hover {
+    color: #ffffff;
+    text-decoration: underline;
+    text-underline-offset: 6px;
+    text-decoration-thickness: 2px;
+}
+
+/* Active Section Highlight */
+.navItem.active {
+    background-color: var(--card-bg);
+    color: var(--text-heading);
+    font-weight: 900;
+    text-decoration: none;
+    cursor: default;
+    box-shadow: none;
+}
+
+/* Dark Mode Nav Links */
+:global([data-theme="dark"]) .navItem {
+    color: #7d8ea6;
+}
+
+:global([data-theme="dark"]) .navItem:hover {
+    color: #ffffff;
+}
+
+:global([data-theme="dark"]) .navItem.active {
+    background-color: var(--card-bg);
+    color: #ffffff;
+    font-weight: 900;
+    box-shadow: none;
+}
+
+/* Corner radius for first tab */
+.navLinks li:first-child .navItem.active {
+    border-top-left-radius: 6px;
+}
+
+/* Theme Toggle Button */
+.themeToggleBtn {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: var(--accent-gold);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: transform 0.25s ease, background-color 0.2s ease;
+}
+
+.themeToggleBtn:hover {
+    background: rgba(255, 255, 255, 0.22);
+    transform: rotate(20deg) scale(1.08);
+}
+
+/* Right-side Nav Controls (Greeting badge, Social Links) */
+.navSocials {
+    display: flex;
+    align-items: center;
+    padding-right: 20px;
+    gap: 16px;
+}
+
+.navSocials a {
+    color: #cbd5e1;
+    text-decoration: none;
+    font-size: 1.15rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s ease;
+}
+
+.navSocials a:hover {
+    color: var(--accent-gold);
+}
+
+/* Time-based greeting pill */
+.greetingBadge {
+    color: var(--accent-gold);
+    font-size: 0.82rem;
+    font-weight: 700;
+    padding: 4px 10px;
+    background: rgba(245, 158, 11, 0.15);
+    border-radius: 16px;
+    white-space: nowrap;
+}
+
+@media (max-width: 650px) {
+    .navBar {
+        flex-direction: column;
+        padding-bottom: 8px;
+    }
+
+    .navItem {
+        padding: 10px 14px;
+        font-size: 0.78rem;
+    }
+
+    .navSocials {
+        padding-right: 0;
+        margin-top: 4px;
+    }
+}
