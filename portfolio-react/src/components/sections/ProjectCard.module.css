@@ -1,0 +1,378 @@
+/* 3D Book Wrapper */
+.projectBookWrapper {
+    width: 100%;
+    max-width: 320px;
+    display: flex;
+    justify-content: center;
+}
+
+/* 3D Book Project Container */
+.book3dCard {
+    position: relative;
+    width: 100%;
+    height: 425px;
+    cursor: pointer;
+    perspective: 1200px;
+    perspective-origin: 50% 50%;
+    outline: none;
+    /*removes browser default button outline*/
+    transform-style: preserve-3d;
+}
+
+/* Layer 1: Back Cover */
+.bookBackCover {
+    position: absolute;
+    inset: 0;
+    border-radius: 4px 26px 26px 4px;
+    z-index: 1;
+    /* Layering */
+    opacity: 0;
+    pointer-events: none;
+    transform-origin: 0% 50%;
+    transform: rotateY(0deg) translate3d(0, 0, 0);
+    transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1),
+        /*cubic-bezier controls the speed of animation using custom timing curve*/
+        opacity 0.3s ease,
+        box-shadow 0.4s ease;
+}
+
+/* Back Cover Colors */
+.theme-sapphire.bookBackCover {
+    background: #ab3425;
+}
+
+.theme-emerald.bookBackCover {
+    background: #1c584b;
+}
+
+.theme-terracotta.bookBackCover {
+    background: #8f4f07;
+}
+
+.theme-indigo.bookBackCover {
+    background: #27236d;
+}
+
+.theme-crimson.bookBackCover {
+    background: #700d2b;
+}
+
+.theme-navy.bookBackCover {
+    background: #0c4a6e;
+}
+
+/* Layer 2: Recessed Pages Stack */
+.bookPagesStack {
+    position: absolute;
+    top: 4px;
+    bottom: 4px;
+    left: 0;
+    right: 0;
+    border-radius: 4px 20px 20px 4px;
+    background: #faf7f0;
+    z-index: 2;
+    opacity: 0;
+    pointer-events: none;
+    transform-origin: 0% 50%;
+    box-shadow: inset 1px 0 3px rgba(0, 0, 0, 0.05);
+    transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.3s ease;
+}
+
+.pagesRightEdge {
+    position: absolute;
+    top: 2px;
+    right: 0;
+    bottom: 2px;
+    width: 22px;
+    border-radius: 0 18px 18px 0;
+    background: #fdfcf9;
+    background-image: repeating-linear-gradient(to right,
+            /*creates horizontal lines on the pages stack*/
+            #ffffff 0px,
+            #ffffff 1.2px,
+            #beb6a6 1.2px,
+            #beb6a6 2.2px,
+            #f4f1ea 2.2px,
+            #f4f1ea 3.2px);
+    border-right: 1.5px solid #b8b0a0;
+    box-shadow:
+        inset 4px 0 6px -2px rgba(0, 0, 0, 0.16),
+        inset -1px 0 2px rgba(0, 0, 0, 0.08);
+}
+
+/* Layer 3: Front Hardcover */
+.bookCover {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    display: flex;
+    border-radius: 4px 26px 26px 4px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 14px 32px -6px rgba(15, 23, 42, 0.18), 0 2px 6px rgba(15, 23, 42, 0.08);
+    transform-origin: 0% 50%;
+    transform-style: preserve-3d;
+    transform: rotateY(0deg) translate3d(0, 0, 0);
+    transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+    will-change: transform;
+    /*optimizes animation by preparing GPU*/
+}
+
+/* Front Cover Color Gradients */
+.theme-sapphire {
+    background: linear-gradient(145deg, #d85c4a 0%, #c44735 100%);
+}
+
+.theme-emerald {
+    background: linear-gradient(145deg, #378e7c 0%, #297464 100%);
+}
+
+.theme-terracotta {
+    background: linear-gradient(145deg, #cf8628 0%, #b87118 100%);
+}
+
+.theme-indigo {
+    background: linear-gradient(145deg, #4f46e5 0%, #3730a3 100%);
+}
+
+.theme-crimson {
+    background: linear-gradient(145deg, #be123c 0%, #9f1239 100%);
+}
+
+.theme-navy {
+    background: linear-gradient(145deg, #0284c7 0%, #0369a1 100%);
+}
+
+/* 3D Hover & Focus Effect (Book Swings Open to Left) */
+.book3dCard:hover .bookCover,
+.book3dCard:focus-visible .bookCover {
+    transform: rotateY(-22deg) translate3d(0, 0, 6px);
+    box-shadow: 12px 18px 32px rgba(0, 0, 0, 0.28), 4px 6px 12px rgba(0, 0, 0, 0.14);
+}
+
+.book3dCard:hover .bookPagesStack,
+.book3dCard:focus-visible .bookPagesStack {
+    opacity: 1;
+    transform: rotateY(0deg) translate3d(0, 0, 0);
+}
+
+.book3dCard:hover .bookBackCover,
+.book3dCard:focus-visible .bookBackCover {
+    opacity: 1;
+    transform: rotateY(0deg) translate3d(5px, 0, -4px);
+    box-shadow: 18px 22px 38px rgba(15, 23, 42, 0.3), 6px 10px 16px rgba(15, 23, 42, 0.18);
+}
+
+/* Spine Strip on Left */
+.coverSpineStrip {
+    position: relative;
+    width: 36px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+    border-right: 1px solid rgba(0, 0, 0, 0.2);
+    box-shadow: 1px 0 0 rgba(255, 255, 255, 0.18);
+}
+
+.theme-sapphire .coverSpineStrip {
+    background: linear-gradient(to right, #9e3223 0%, #ad3b2b 100%);
+}
+
+.theme-emerald .coverSpineStrip {
+    background: linear-gradient(to right, #1d5347 0%, #236355 100%);
+}
+
+.theme-terracotta .coverSpineStrip {
+    background: linear-gradient(to right, #874f0a 0%, #9e5f11 100%);
+}
+
+.theme-indigo .coverSpineStrip {
+    background: linear-gradient(to right, #312e81 0%, #3730a3 100%);
+}
+
+.theme-crimson .coverSpineStrip {
+    background: linear-gradient(to right, #881337 0%, #9f1239 100%);
+}
+
+.theme-navy .coverSpineStrip {
+    background: linear-gradient(to right, #075985 0%, #0369a1 100%);
+}
+
+.spineCreaseShadow {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    box-shadow: inset -2px 0 3px rgba(0, 0, 0, 0.25);
+    pointer-events: none;
+}
+
+.spineStripDate {
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    letter-spacing: 2.8px;
+    font-family: var(--font-heading);
+    font-size: 0.74rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.88);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+    padding: 16px 0;
+}
+
+/* Front Cover Content */
+.coverBody {
+    flex: 1;
+    padding: 16px 16px 16px 14px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+    position: relative;
+    z-index: 2;
+}
+
+.coverPictureFrame {
+    position: relative;
+    height: 145px;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #ffffff;
+    border: 2px solid rgba(255, 255, 255, 0.55);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15), inset 0 1px 2px rgba(255, 255, 255, 0.3);
+}
+
+.coverPictureImg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.coverHoverHint {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 12px 10px 8px;
+    background: linear-gradient(to top, rgba(10, 15, 26, 0.85) 0%, rgba(10, 15, 26, 0.4) 60%, transparent 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transform: translateY(4px);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    pointer-events: none;
+    z-index: 3;
+}
+
+.book3dCard:hover .coverHoverHint,
+.book3dCard:focus-visible .coverHoverHint {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.hoverHintText {
+    font-family: var(--font-heading);
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    color: #ffffff;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba(255, 255, 255, 0.18);
+    backdrop-filter: blur(4px);
+    padding: 3px 10px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.coverTitle {
+    font-family: var(--font-heading);
+    font-size: 1.12rem;
+    font-weight: 800;
+    color: #ffffff;
+    line-height: 1.35;
+    margin: 12px 0 auto;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+.coverBottomRow {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 8px;
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.coverChipsGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex-grow: 1;
+}
+
+.coverChipsLabel {
+    font-family: var(--font-heading);
+    font-size: 0.62rem;
+    font-weight: 800;
+    letter-spacing: 1.1px;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.82);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.coverChips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.techChip {
+    background: rgba(255, 255, 255, 0.22);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    color: #ffffff;
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease;
+}
+
+.book3dCard:hover .techChip {
+    background: rgba(255, 255, 255, 0.32);
+}
+
+.coverGithubBtn {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.25);
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.coverGithubBtn:hover {
+    background: #ffffff;
+    color: #0f172a;
+    transform: scale(1.12);
+    border-color: #ffffff;
+}
