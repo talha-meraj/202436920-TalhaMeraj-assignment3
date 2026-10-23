@@ -3,6 +3,7 @@ import Hero from './components/layout/Hero';
 import Navbar from './components/layout/Navbar';
 import About from './components/sections/About';
 import Projects from './components/sections/Projects';
+import Contact from './components/sections/Contact';
 import Footer from './components/layout/Footer';
 
 export default function App() {
@@ -30,6 +31,7 @@ export default function App() {
       <main className="main-card">
         <About />
         <Projects />
+        <Contact />
       </main>
 
       <Footer />

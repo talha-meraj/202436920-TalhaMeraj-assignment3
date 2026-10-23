@@ -1,0 +1,304 @@
+/* Contact Section Grid Layout */
+.contactGrid {
+    display: flex;
+    gap: 40px;
+    align-items: flex-start;
+}
+
+/* Left Column: Direct Contact Info */
+.contactDetails {
+    flex: 1 1 40%;
+}
+
+.getInTouchTitle {
+    font-family: var(--font-heading, 'Montserrat', Arial, sans-serif);
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--text-heading, #1e293b);
+    margin-bottom: 10px;
+}
+
+.getInTouchText {
+    color: var(--text-muted, #475569);
+    font-size: 0.92rem;
+    line-height: 1.6;
+    margin-bottom: 24px;
+}
+
+.contactAddressBlock {
+    font-style: normal;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.contactItem {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    font-size: 0.9rem;
+    color: var(--text-main, #334155);
+}
+
+.itemIcon {
+    font-size: 1.15rem;
+    color: var(--accent-blue, #2563eb);
+    width: 22px;
+    text-align: center;
+    margin-top: 2px;
+    flex-shrink: 0;
+}
+
+.itemLabel {
+    font-weight: 700;
+    font-size: 0.92rem;
+    color: var(--text-heading, #1e293b);
+}
+
+.itemLink,
+.itemText {
+    font-size: 0.92rem;
+    color: var(--text-main, #334155);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.itemLink:hover {
+    color: var(--accent-blue, #2563eb);
+    text-decoration: underline;
+}
+
+/* Right Column: Form Container */
+.contactFormWrap {
+    flex: 1 1 60%;
+}
+
+.contactForm {
+    width: 100%;
+}
+
+/* Fieldset and Legend styling that breaks the box */
+.formFieldset {
+    border: 1px solid var(--border-color, #e2e8f0);
+    border-radius: 8px;
+    padding: 24px 26px;
+    background-color: var(--card-bg, #ffffff);
+    margin: 0;
+}
+
+.formLegend {
+    font-family: var(--font-heading, 'Montserrat', Arial, sans-serif);
+    font-weight: 800;
+    font-size: 0.95rem;
+    color: var(--text-heading, #1e293b);
+    padding: 0 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-left: 12px;
+}
+
+/* Form Group Controls */
+.formGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 18px;
+}
+
+.formLabel {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-heading, #334155);
+}
+
+.requiredStar {
+    color: #dc2626;
+    margin-left: 2px;
+    font-weight: 700;
+}
+
+.labelRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.charCount {
+    font-size: 0.78rem;
+    color: var(--text-muted, #94a3b8);
+    font-family: monospace;
+}
+
+.charNear {
+    color: #f59e0b;
+    font-weight: 600;
+}
+
+.charOver {
+    color: #ef4444;
+    font-weight: 700;
+}
+
+/* Inputs and Textareas: instant theme sync with NO transition lag */
+.formInput,
+.formTextarea {
+    padding: 10px 14px;
+    border: 1px solid var(--input-border, #cbd5e1);
+    border-radius: 4px;
+    font-family: var(--font-body, inherit);
+    font-size: 0.92rem;
+    color: var(--input-text, #0f172a);
+    background-color: var(--input-bg, #ffffff);
+    transition: box-shadow 0.15s ease, border-color 0.15s ease;
+    width: 100%;
+}
+
+.formInput:focus,
+.formTextarea:focus {
+    outline: none;
+    border-color: var(--accent-blue, #2563eb);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.formTextarea {
+    resize: vertical;
+    min-height: 110px;
+}
+
+/* Error State styling (Compound Selector) */
+.formInput.inputError,
+.formTextarea.inputError {
+    border-color: #ef4444;
+    background-color: rgba(239, 68, 68, 0.04);
+}
+
+.formInput.inputError:focus,
+.formTextarea.inputError:focus {
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+}
+
+.errorMessage {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.8rem;
+    color: #dc2626;
+    font-weight: 600;
+    margin-top: 3px;
+}
+
+/* Submit Button - Light Mode (High-contrast Slate) */
+.btnSubmit {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    align-self: flex-start;
+    padding: 12px 26px;
+    background-color: #0f172a;
+    color: #ffffff;
+    font-family: var(--font-heading, 'Montserrat', Arial, sans-serif);
+    font-size: 0.85rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+    margin-top: 4px;
+}
+
+.btnSubmit:hover:not(:disabled) {
+    background-color: #1e293b;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.25);
+}
+
+.btnSubmit:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.btnSubmit:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+}
+
+/* Submit Button - Dark Mode (Vibrant High-Visibility Royal Blue) */
+:global([data-theme="dark"]) .btnSubmit {
+    background-color: var(--accent-blue, #3b82f6);
+    color: #ffffff;
+    box-shadow: 0 4px 16px rgba(59, 130, 246, 0.35);
+}
+
+:global([data-theme="dark"]) .btnSubmit:hover:not(:disabled) {
+    background-color: var(--accent-blue-hover, #60a5fa);
+    box-shadow: 0 6px 22px rgba(59, 130, 246, 0.55);
+    transform: translateY(-1px);
+}
+
+.spinner {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Feedback Alert Banner */
+.formFeedback {
+    padding: 11px 16px;
+    border-radius: 5px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    margin-top: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.formFeedback.success {
+    background-color: #dcfce7;
+    color: #166534;
+    border: 1px solid #bbf7d0;
+}
+
+.formFeedback.error {
+    background-color: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
+}
+
+.feedbackIcon {
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+
+/* Responsive Breakpoints */
+@media (max-width: 880px) {
+    .contactGrid {
+        flex-direction: column;
+    }
+
+    .contactDetails,
+    .contactFormWrap {
+        flex: 1 1 100%;
+        width: 100%;
+    }
+}
+
+@media (max-width: 650px) {
+    .formFieldset {
+        padding: 20px 16px;
+    }
+
+    .btnSubmit {
+        width: 100%;
+        justify-content: center;
+    }
+}
