@@ -97,6 +97,67 @@
     margin-left: 12px;
 }
 
+/* Restored Draft Banner Notification */
+.draftRestoredBanner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    background-color: var(--card-inner-bg);
+    border: 1px dashed var(--accent-blue);
+    border-radius: 6px;
+    padding: 10px 14px;
+    margin-top: 6px;
+    margin-bottom: 18px;
+    font-size: 0.82rem;
+    color: var(--text-main);
+    animation: draftFadeIn 0.25s ease-out;
+}
+
+@keyframes draftFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.draftTextWrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-heading);
+    font-weight: 600;
+}
+
+.draftIcon {
+    color: var(--accent-blue);
+    font-size: 0.95rem;
+    flex-shrink: 0;
+}
+
+.btnDiscardDraft {
+    background: transparent;
+    color: #ef4444;
+    border: 1px solid #ef4444;
+    border-radius: 4px;
+    padding: 3px 9px;
+    font-size: 0.74rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.btnDiscardDraft:hover {
+    background: #ef4444;
+    color: #ffffff;
+}
+
 /* Form Group Controls */
 .formGroup {
     display: flex;

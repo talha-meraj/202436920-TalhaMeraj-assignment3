@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
     FaEnvelope,
     FaLinkedinIn,
@@ -7,28 +7,73 @@ import {
     FaSpinner,
     FaPaperPlane,
     FaCircleCheck,
-    FaTriangleExclamation
+    FaTriangleExclamation,
+    FaFloppyDisk
 } from 'react-icons/fa6';
 import styles from './Contact.module.css';
+
+// Storage key for auto-saved draft
+const DRAFT_STORAGE_KEY = 'portfolio-contact-draft-v1';
 
 // Regex patterns to check email format and valid name characters
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const NAME_REGEX = /^[a-zA-Z\s\-'.]+$/;
 
 export default function Contact() {
-    // Form inputs stored in a single state object
-    const [formData, setFormData] = useState({
-        name: '',
-        email: '',
-        message: '',
+    // 1. Controlled form state initialized from localStorage draft if present
+    const [formData, setFormData] = useState(() => {
+        try {
+            const savedDraft = localStorage.getItem(DRAFT_STORAGE_KEY);
+            if (savedDraft) {
+                const parsed = JSON.parse(savedDraft);
+                if (parsed.name || parsed.email || parsed.message) {
+                    return parsed;
+                }
+            }
+        } catch {
+            // Ignore parse errors
+        }
+        return { name: '', email: '', message: '' };
     });
 
-    // Track error messages for each field
+    // 2. Track whether a previous draft was restored on mount
+    const [isDraftRestored, setIsDraftRestored] = useState(() => {
+        try {
+            const savedDraft = localStorage.getItem(DRAFT_STORAGE_KEY);
+            if (savedDraft) {
+                const parsed = JSON.parse(savedDraft);
+                return Boolean(parsed.name || parsed.email || parsed.message);
+            }
+        } catch {
+            // Ignore
+        }
+        return false;
+    });
+
+    // 3. Track error messages for each field
     const [errors, setErrors] = useState({});
-    // Loading state while submitting
+    // 4. Loading state while submitting
     const [isSubmitting, setIsSubmitting] = useState(false);
-    // Feedback banner shown below the form
+    // 5. Feedback banner shown below the form
     const [feedback, setFeedback] = useState(null);
+
+    // Auto-save form draft to localStorage whenever fields change
+    useEffect(() => {
+        const hasContent = formData.name.trim() || formData.email.trim() || formData.message.trim();
+        if (hasContent) {
+            try {
+                localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(formData));
+            } catch {
+                // Ignore storage quota errors
+            }
+        } else {
+            try {
+                localStorage.removeItem(DRAFT_STORAGE_KEY);
+            } catch {
+                // Ignore
+            }
+        }
+    }, [formData]);
 
     // Validation rules: returns an error message string or '' if valid
     const validateField = (field, value) => {
@@ -58,11 +103,11 @@ export default function Contact() {
         const { name, value } = e.target;
         setFormData((prev) => ({ ...prev, [name]: value }));
 
-        // Clear error as soon as user fixes the field
+        // Clear error as soon as user edits the field
         if (errors[name]) {
             setErrors((prev) => ({ ...prev, [name]: '' }));
         }
-        // Clear any old feedback banner
+        // Clear old feedback banner
         if (feedback) setFeedback(null);
     };
 
@@ -72,6 +117,18 @@ export default function Contact() {
         const fieldError = validateField(name, value);
         if (fieldError) {
             setErrors((prev) => ({ ...prev, [name]: fieldError }));
+        }
+    };
+
+    // Clear saved draft manually
+    const handleDiscardDraft = () => {
+        setFormData({ name: '', email: '', message: '' });
+        setErrors({});
+        setIsDraftRestored(false);
+        try {
+            localStorage.removeItem(DRAFT_STORAGE_KEY);
+        } catch {
+            // Ignore
         }
     };
 
@@ -104,8 +161,15 @@ export default function Contact() {
         try {
             await new Promise((resolve) => setTimeout(resolve, 950));
 
-            // Success: reset form and display confirmation banner
+            // Success: reset form, clear draft, display confirmation
             setFormData({ name: '', email: '', message: '' });
+            setIsDraftRestored(false);
+            try {
+                localStorage.removeItem(DRAFT_STORAGE_KEY);
+            } catch {
+                // Ignore
+            }
+
             setFeedback({
                 type: 'success',
                 text: 'Message received! Thank you for reaching out; I will respond promptly.',
@@ -189,6 +253,24 @@ export default function Contact() {
                     <form className={styles.contactForm} onSubmit={handleSubmit} noValidate>
                         <fieldset className={styles.formFieldset}>
                             <legend className={styles.formLegend}>SEND A MESSAGE</legend>
+
+                            {/* Restored Draft Banner Notification */}
+                            {isDraftRestored && (
+                                <div className={styles.draftRestoredBanner} role="status">
+                                    <div className={styles.draftTextWrap}>
+                                        <FaFloppyDisk className={styles.draftIcon} aria-hidden="true" />
+                                        <span>Restored unsaved message draft from your last visit.</span>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        className={styles.btnDiscardDraft}
+                                        onClick={handleDiscardDraft}
+                                        title="Clear restored message"
+                                    >
+                                        Discard
+                                    </button>
+                                </div>
+                            )}
 
                             {/* Name Input */}
                             <div className={styles.formGroup}>
