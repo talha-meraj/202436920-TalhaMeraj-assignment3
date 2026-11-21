@@ -5,6 +5,8 @@ import {
     FaStar,
     FaFont,
     FaCalendarDays,
+    FaClockRotateLeft,
+    FaCircleInfo,
     FaArrowDown,
     FaArrowUp,
     FaSort,
@@ -16,15 +18,18 @@ import {
     FaChevronUp
 } from 'react-icons/fa6';
 import { PROJECTS_DATA } from '../../data/projectsData';
+import { fetchGitHubRepos, extractRepoName } from '../../services/githubService';
 import ProjectCard from './ProjectCard';
 import ProjectModal from './ProjectModal';
+import SortInfoModal from './SortInfoModal';
 import styles from './Projects.module.css';
 
 // Available sort buttons configuration using react-icons
 const SORT_CONFIG = [
     { field: 'featured', label: 'Featured', icon: FaStar },
     { field: 'title', label: 'Title', icon: FaFont },
-    { field: 'date', label: 'Date', icon: FaCalendarDays }
+    { field: 'date', label: 'Date', icon: FaCalendarDays },
+    { field: 'updated', label: 'Updated', icon: FaClockRotateLeft }
 ];
 
 // Helper to determine how many cards fit in one row based on window width
@@ -36,21 +41,55 @@ function getInitialItemsPerRow() {
 }
 
 export default function Projects() {
-    // Sort state: which field and ascending/descending
-    const [sortField, setSortField] = useState('featured');
-    const [sortDirection, setSortDirection] = useState('desc');
+    // 1. Sort state persisted in localStorage
+    const [sortField, setSortField] = useState(() => {
+        return localStorage.getItem('portfolio-sort-field-v1') || 'featured';
+    });
+    const [sortDirection, setSortDirection] = useState(() => {
+        return localStorage.getItem('portfolio-sort-dir-v1') || 'desc';
+    });
 
-    // Search query text input
+    // 2. Search query text input
     const [searchQuery, setSearchQuery] = useState('');
 
-    // Show more / show less toggle
+    // 3. Show more / show less toggle
     const [isExpanded, setIsExpanded] = useState(false);
 
-    // Holds currently selected project for modal popup
+    // 4. Modal states
     const [selectedProject, setSelectedProject] = useState(null);
+    const [isSortInfoOpen, setIsSortInfoOpen] = useState(false);
 
-    // Number of items per row (responsive)
+    // 5. GitHub Live API data state
+    const [gitHubData, setGitHubData] = useState({
+        reposMap: {},
+        status: 'loading',
+        lastFetched: null
+    });
+
+    // 6. Number of items per row (responsive)
     const [itemsPerRow, setItemsPerRow] = useState(getInitialItemsPerRow);
+
+    // Sync sort settings to localStorage
+    useEffect(() => {
+        localStorage.setItem('portfolio-sort-field-v1', sortField);
+        localStorage.setItem('portfolio-sort-dir-v1', sortDirection);
+    }, [sortField, sortDirection]);
+
+    // Fetch live GitHub repository data on load
+    useEffect(() => {
+        let isMounted = true;
+        fetchGitHubRepos().then((result) => {
+            if (isMounted && result) {
+                setGitHubData(result);
+            }
+        }).catch((err) => {
+            console.warn('Could not load GitHub data:', err);
+        });
+
+        return () => {
+            isMounted = false;
+        };
+    }, []);
 
     // Keep itemsPerRow updated when user resizes the browser window
     useEffect(() => {
@@ -59,13 +98,13 @@ export default function Projects() {
         return () => window.removeEventListener('resize', updateItemsPerRow);
     }, []);
 
-    // Filter & Sort Pipeline: re-calculates only when search or sort options change
+    // Filter & Sort Pipeline: re-calculates only when search, sort, or gitHubData changes
     const sortedProjects = useMemo(() => {
         const q = searchQuery.trim().toLowerCase();
 
         // 1. Filter: Match search text across title, description, category, and tags
         const filtered = PROJECTS_DATA.filter((project) => {
-            if (!q) return true; // Show all if search box is empty
+            if (!q) return true;
             return (
                 project.title.toLowerCase().includes(q) ||
                 project.desc.toLowerCase().includes(q) ||
@@ -76,20 +115,31 @@ export default function Projects() {
 
         // 2. Sort: Order the filtered results by the selected field and direction
         return filtered.sort((a, b) => {
-            let diff = 0;
+            let diff;
             if (sortField === 'title') {
                 diff = a.title.localeCompare(b.title);
             } else if (sortField === 'date') {
-                diff = new Date(a.date) - new Date(b.date);
+                // Reliable cross-browser date parsing via ISO strings (YYYY-MM-DD)
+                diff = new Date(a.isoDate || a.date) - new Date(b.isoDate || b.date);
+            } else if (sortField === 'updated') {
+                // Dynamic sort by live GitHub pushed_at timestamp (or fallback to release date)
+                const aRepo = gitHubData.reposMap[extractRepoName(a.repoUrl)];
+                const bRepo = gitHubData.reposMap[extractRepoName(b.repoUrl)];
+                const aTime = aRepo?.pushedAt
+                    ? new Date(aRepo.pushedAt).getTime()
+                    : new Date(a.isoDate || a.date).getTime();
+                const bTime = bRepo?.pushedAt
+                    ? new Date(bRepo.pushedAt).getTime()
+                    : new Date(b.isoDate || b.date).getTime();
+                diff = aTime - bTime;
             } else {
-                // 'featured': featured items first, then tiebreak by date
-                const aFeatured = a.featured ? 1 : 0;
-                const bFeatured = b.featured ? 1 : 0;
-                diff = (a.featured || 0) - (b.featured || 0) || new Date('1 ' + a.date) - new Date('1 ' + b.date);
+                // 'featured': numeric priority score, tiebreak with date
+                diff = (a.featured || 0) - (b.featured || 0) ||
+                    (new Date(a.isoDate || a.date) - new Date(b.isoDate || b.date));
             }
             return sortDirection === 'asc' ? diff : -diff;
         });
-    }, [searchQuery, sortField, sortDirection]);
+    }, [searchQuery, sortField, sortDirection, gitHubData]);
 
     // Handle sort button click: toggle direction if already active, or switch field
     const handleSortClick = (field) => {
@@ -114,10 +164,9 @@ export default function Projects() {
     // Handle show more / show less toggle
     const handleToggleExpand = () => {
         if (isExpanded) {
-            // When collapsing, scroll smoothly back up to the top of the projects section
             const projectsEl = document.getElementById('projects');
             if (projectsEl) {
-                const navOffset = 64; // Height of sticky navbar
+                const navOffset = 64;
                 const targetY = projectsEl.getBoundingClientRect().top + window.scrollY - navOffset;
                 window.scrollTo({ top: targetY, behavior: 'smooth' });
             }
@@ -130,11 +179,9 @@ export default function Projects() {
     // Determine how many projects to display
     const isSearching = searchQuery.trim().length > 0;
     const displayedProjects = useMemo(() => {
-        // If actively searching or expanded, display all matching projects
         if (isSearching || isExpanded) {
             return sortedProjects;
         }
-        // Otherwise, collapse and show only one row
         return sortedProjects.slice(0, itemsPerRow);
     }, [sortedProjects, isExpanded, itemsPerRow, isSearching]);
 
@@ -182,6 +229,17 @@ export default function Projects() {
                             </button>
                         );
                     })}
+
+                    {/* Borderless Sort Info Guide Button */}
+                    <button
+                        type="button"
+                        className={styles.btnSortInfo}
+                        onClick={() => setIsSortInfoOpen(true)}
+                        aria-label="View explanation for sorting criteria"
+                        title="How sorting works"
+                    >
+                        <FaCircleInfo aria-hidden="true" />
+                    </button>
                 </div>
 
                 {/* Real-Time Search Box */}
@@ -211,7 +269,7 @@ export default function Projects() {
                 </div>
             </div>
 
-            {/* Empty Search Feedback State (shown when no projects match the query) */}
+            {/* Empty Search Feedback State */}
             {sortedProjects.length === 0 && (
                 <div id="noProjectsMessage" className={styles.emptyStateCard} role="status">
                     <span className={styles.emptyStateIcon}><FaMagnifyingGlassMinus aria-hidden="true" /></span>
@@ -225,7 +283,7 @@ export default function Projects() {
                 </div>
             )}
 
-            {/* 3D Book Cards Grid: maps over sorted/filtered projects */}
+            {/* 3D Book Cards Grid */}
             {displayedProjects.length > 0 && (
                 <div className={styles.projectsGrid} id="projectsContainer">
                     {displayedProjects.map((project) => (
@@ -238,15 +296,13 @@ export default function Projects() {
                 </div>
             )}
 
-            {/* Show More / Show Less Controls (only shown if cards exceed one row and not searching) */}
+            {/* Show More / Show Less Controls */}
             {hasHiddenProjects && (
                 <div className={styles.projectsBottomSection}>
-                    {/* Subtle item counter */}
                     <div className={styles.projectsCountSubtle}>
                         Showing <span className={styles.countNumber}>{displayedProjects.length}</span> of{' '}
                         <span className={styles.countNumber}>{sortedProjects.length}</span> projects
                     </div>
-                    {/* Expand/Collapse Toggle Button */}
                     <div className={styles.expandProjectsContainer}>
                         <button
                             id="expandProjectsBtn"
@@ -261,13 +317,21 @@ export default function Projects() {
                 </div>
             )}
 
-            {/* Project Details Modal (opens when a book card is clicked) */}
+            {/* Project Details Modal with Live GitHub Stats & Language Chart */}
             {selectedProject && (
                 <ProjectModal
+                    key={selectedProject.id}
                     project={selectedProject}
+                    gitHubReposMap={gitHubData.reposMap}
                     onClose={() => setSelectedProject(null)}
                 />
             )}
+
+            {/* Sort Information Guide Modal */}
+            <SortInfoModal
+                isOpen={isSortInfoOpen}
+                onClose={() => setIsSortInfoOpen(false)}
+            />
         </section>
     );
 }

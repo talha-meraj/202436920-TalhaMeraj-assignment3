@@ -1,0 +1,227 @@
+.infoModalBackdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 999999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(7, 12, 18, 0.75);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    padding: 20px;
+    animation: fadeIn 0.22s ease-out;
+}
+
+.infoModalBackdrop.isClosing {
+    animation: fadeOut 0.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    pointer-events: none;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+    }
+}
+
+.infoModalCard {
+    position: relative;
+    width: 100%;
+    max-width: 440px;
+    max-height: 90vh;
+    overflow-y: auto;
+    background: var(--card-bg);
+    color: var(--text-main);
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.55);
+    display: flex;
+    flex-direction: column;
+    animation: slideUp 0.26s cubic-bezier(0.16, 1, 0.3, 1);
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-subtle) transparent;
+}
+
+.infoModalCard::-webkit-scrollbar {
+    width: 5px;
+}
+
+.infoModalCard::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.infoModalCard::-webkit-scrollbar-thumb {
+    background: var(--border-subtle);
+    border-radius: 999px;
+}
+
+.infoModalCard.isClosing {
+    animation: slideDown 0.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(16px) scale(0.97);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+
+    to {
+        opacity: 0;
+        transform: translateY(14px) scale(0.97);
+    }
+}
+
+.infoModalHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 18px 10px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.headerTitleWrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.infoIcon {
+    color: var(--accent-blue);
+    font-size: 1.05rem;
+}
+
+.infoModalTitle {
+    font-family: var(--font-heading);
+    font-size: 1.02rem;
+    font-weight: 800;
+    color: var(--text-heading);
+}
+
+.infoModalClose {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--text-muted);
+    border: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 0.82rem;
+    transition: all 0.18s ease;
+}
+
+.infoModalClose:hover {
+    background: var(--tag-bg);
+    color: var(--text-heading);
+    border-color: var(--border-subtle);
+}
+
+.infoModalBody {
+    padding: 12px 18px;
+    font-size: 0.86rem;
+    line-height: 1.45;
+}
+
+.infoModalIntro {
+    color: var(--text-muted);
+    margin-bottom: 10px;
+    font-size: 0.8rem;
+    line-height: 1.4;
+}
+
+.sortGuideList {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.sortGuideItem {
+    background: var(--card-inner-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 8px 12px;
+    transition: border-color 0.2s ease;
+}
+
+.sortGuideItem:hover {
+    border-color: var(--border-subtle);
+}
+
+.itemHeader {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin-bottom: 3px;
+}
+
+.itemIconWrap {
+    color: var(--accent-gold);
+    display: inline-flex;
+    font-size: 0.82rem;
+}
+
+.itemLabel {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-heading);
+}
+
+.itemDesc {
+    font-size: 0.78rem;
+    color: var(--text-main);
+    line-height: 1.4;
+    margin: 0;
+}
+
+.infoModalFooter {
+    display: flex;
+    justify-content: flex-end;
+    padding: 10px 18px 12px;
+    border-top: 1px solid var(--border-color);
+    background: var(--card-inner-bg);
+}
+
+.btnGotIt {
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 6px 14px;
+    border-radius: 6px;
+    background: var(--accent-blue);
+    color: #ffffff;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.btnGotIt:hover {
+    background: var(--accent-blue-hover);
+    transform: translateY(-1px);
+}
