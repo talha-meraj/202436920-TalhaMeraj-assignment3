@@ -1,14 +1,27 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { FaXmark, FaGithub } from 'react-icons/fa6';
+import {
+    FaXmark,
+    FaGithub,
+    FaStar,
+    FaCodeFork,
+    FaClock,
+    FaCode
+} from 'react-icons/fa6';
+import { extractRepoName, fetchRepoLanguages } from '../../services/githubService';
+import LanguageBarChart from '../common/LanguageBarChart';
 import styles from './ProjectModal.module.css';
 
-export default function ProjectModal({ project, onClose }) {
+export default function ProjectModal({ project, gitHubReposMap = {}, onClose }) {
     // Track if modal is currently playing its closing animation
     const [isClosing, setIsClosing] = useState(false);
     // Ref prevents triggering the close function multiple times while animation plays
     const closingRef = useRef(false);
 
-    // Trigger exit animation, then call parent onClose after 220ms (matches CSS animation)
+    // Language breakdown state
+    const [languages, setLanguages] = useState([]);
+    const [isLoadingLanguages, setIsLoadingLanguages] = useState(true);
+
+    // Trigger exit animation, then call parent onClose after 220ms
     const handleClose = useCallback(() => {
         if (closingRef.current) return;
         closingRef.current = true;
@@ -18,49 +31,76 @@ export default function ProjectModal({ project, onClose }) {
         }, 220);
     }, [onClose]);
 
+    // Extract repo details for this project
+    const repoName = project ? extractRepoName(project.repoUrl) : null;
+    const repoStats = repoName && gitHubReposMap ? gitHubReposMap[repoName] : null;
+
     useEffect(() => {
         if (!project) return;
 
-        // Reset closing states whenever a new project is loaded
-        setIsClosing(false);
-        closingRef.current = false;
-
-        // Close modal when user presses the Escape key
+        // Close modal when user presses Escape
         const handleKeyDown = (e) => {
             if (e.key === 'Escape') {
                 handleClose();
             }
         };
 
-        // Lock page scrolling while modal is open so background doesn't scroll
-        const originalOverflow = document.body.style.overflow;  /*store original behaviour*/
-        document.body.style.overflow = 'hidden';    /*disables scroll for the main webpage when modal is open*/
+        // Lock page scrolling while modal is open
+        const originalOverflow = document.body.style.overflow;
+        document.body.style.overflow = 'hidden';
         window.addEventListener('keydown', handleKeyDown);
 
-        // Restore page scroll and clean up keydown listener on close
+        // Fetch detailed languages breakdown if a repository exists
+        let isSubscribed = true;
+
+        if (repoStats) {
+            const primaryLang = repoStats.primaryLanguage || (project.chips && project.chips[0]);
+            fetchRepoLanguages(repoName, primaryLang)
+                .then((data) => {
+                    if (isSubscribed) {
+                        setLanguages(data || []);
+                        setIsLoadingLanguages(false);
+                    }
+                })
+                .catch(() => {
+                    if (isSubscribed) {
+                        setLanguages([]);
+                        setIsLoadingLanguages(false);
+                    }
+                });
+        }
+
         return () => {
+            isSubscribed = false;
             document.body.style.overflow = originalOverflow;
             window.removeEventListener('keydown', handleKeyDown);
         };
-    }, [project, handleClose]);
+    }, [project, repoName, repoStats, handleClose]);
 
-    // Don't render anything if no project is selected
     if (!project) return null;
+
+    // Format GitHub pushed date
+    const formattedPushedDate = repoStats?.pushedAt
+        ? new Date(repoStats.pushedAt).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+        })
+        : null;
 
     return (
         <div
             className={`${styles.simpleModalBackdrop} ${isClosing ? styles.isClosing : ''}`}
             onClick={handleClose}
-            /*Accessibility attributes */
             role="dialog"
             aria-modal="true"
             aria-labelledby="modalProjectTitle"
         >
             <div
-                className={`${styles.simpleModalCard} ${isClosing ? styles.isClosing : ''}`}
-                onClick={(e) => e.stopPropagation()} // Clicking inside card should not close modal
+                className={`${styles.simpleModalWrapper} ${isClosing ? styles.isClosing : ''}`}
+                onClick={(e) => e.stopPropagation()}
             >
-                {/* Close Button */}
+                {/* Close Button on top, outside the scrollable card */}
                 <button
                     type="button"
                     className={styles.simpleModalClose}
@@ -70,53 +110,118 @@ export default function ProjectModal({ project, onClose }) {
                     <FaXmark aria-hidden="true" />
                 </button>
 
-                {/* Project Image Banner */}
-                {project.image && (
-                    <div className={styles.simpleModalImageWrap}>
-                        <img
-                            src={project.image}
-                            alt={project.imageAlt || project.title}
-                            className={styles.simpleModalImage}
-                        />
-                    </div>
-                )}
+                {/* Scrollable Modal Card */}
+                <div className={styles.simpleModalCard}>
+                    {/* Project Image Banner */}
+                    {project.image && (
+                        <div className={styles.simpleModalImageWrap}>
+                            <img
+                                src={project.image}
+                                alt={project.imageAlt || project.title}
+                                className={styles.simpleModalImage}
+                            />
+                        </div>
+                    )}
 
-                {/* Title & Right-Aligned Date */}
-                <div className={styles.simpleModalHeader}>
-                    <div className={styles.simpleModalTitleRow}>
-                        <h2 id="modalProjectTitle" className={styles.simpleModalTitle}>
-                            {project.title}
-                        </h2>
-                        <span className={styles.simpleModalDate}>{project.date}</span>
-                    </div>
-                </div>
-
-                {/* Description & Key Topics */}
-                <div className={styles.simpleModalBody}>
-                    <p className={styles.simpleModalDesc}>{project.desc}</p>
-
-                    <div className={styles.simpleModalTechSection}>
-                        <h4 className={styles.simpleModalTechTitle}>Key topics</h4>
-                        <div className={styles.simpleModalTags}>
-                            {project.tags.map((tag) => (
-                                <span key={tag} className={styles.simpleModalChip}>
-                                    {tag}
-                                </span>
-                            ))}
+                    {/* Title & Right-Aligned Date */}
+                    <div className={styles.simpleModalHeader}>
+                        <div className={styles.simpleModalTitleRow}>
+                            <h2 id="modalProjectTitle" className={styles.simpleModalTitle}>
+                                {project.title}
+                            </h2>
+                            <span className={styles.simpleModalDate}>{project.date}</span>
                         </div>
                     </div>
-                </div>
 
-                {/* Action Buttons */}
-                <div className={styles.simpleModalFooter}>
-                    <a
-                        href={project.githubUrl || project.repoUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={`${styles.simpleModalBtn} ${styles.primary}`}
-                    >
-                        <FaGithub aria-hidden="true" /> View on GitHub
-                    </a>
+                    {/* Description & Topics */}
+                    <div className={styles.simpleModalBody}>
+                        <p className={styles.simpleModalDesc}>{project.desc}</p>
+
+                        <div className={styles.simpleModalTechSection}>
+                            <h4 className={styles.simpleModalTechTitle}>Key Topics</h4>
+                            <div className={styles.simpleModalTags}>
+                                {project.tags.map((tag) => (
+                                    <span key={tag} className={styles.simpleModalChip}>
+                                        {tag}
+                                    </span>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Live GitHub Repository Stats Section (only rendered if repository data is found) */}
+                        {repoStats && (
+                            <div className={styles.githubStatsSection}>
+                                <div className={styles.githubSectionHeader}>
+                                    <div className={styles.githubSectionTitle}>
+                                        <FaGithub aria-hidden="true" />
+                                        <span>GitHub Repository Stats</span>
+                                    </div>
+                                    {formattedPushedDate && (
+                                        <span className={styles.githubLastUpdated}>
+                                            Updated {formattedPushedDate}
+                                        </span>
+                                    )}
+                                </div>
+
+                                {/* Stats Metrics Row */}
+                                <div className={styles.githubMetricsGrid}>
+                                    <div className={styles.metricCard}>
+                                        <div className={styles.metricIconWrap}>
+                                            <FaStar className={styles.starIcon} aria-hidden="true" />
+                                        </div>
+                                        <div className={styles.metricTextWrap}>
+                                            <span className={styles.metricValue}>{repoStats.stars}</span>
+                                            <span className={styles.metricLabel}>Stars</span>
+                                        </div>
+                                    </div>
+
+                                    <div className={styles.metricCard}>
+                                        <div className={styles.metricIconWrap}>
+                                            <FaCodeFork className={styles.forkIcon} aria-hidden="true" />
+                                        </div>
+                                        <div className={styles.metricTextWrap}>
+                                            <span className={styles.metricValue}>{repoStats.forks}</span>
+                                            <span className={styles.metricLabel}>Forks</span>
+                                        </div>
+                                    </div>
+
+                                    <div className={styles.metricCard}>
+                                        <div className={styles.metricIconWrap}>
+                                            <FaClock className={styles.clockIcon} aria-hidden="true" />
+                                        </div>
+                                        <div className={styles.metricTextWrap}>
+                                            <span className={styles.metricValue}>{formattedPushedDate || 'Recent'}</span>
+                                            <span className={styles.metricLabel}>Last Push</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Codebase Language Breakdown (Horizontal Bar Chart) */}
+                                <div className={styles.languageBreakdownBlock}>
+                                    <div className={styles.languageHeader}>
+                                        <FaCode className={styles.langIcon} aria-hidden="true" />
+                                        <span className={styles.languageTitle}>Codebase Composition</span>
+                                    </div>
+                                    <LanguageBarChart
+                                        languages={languages}
+                                        isLoading={isLoadingLanguages}
+                                    />
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className={styles.simpleModalFooter}>
+                        <a
+                            href={project.repoUrl || project.githubUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className={`${styles.simpleModalBtn} ${styles.primary}`}
+                        >
+                            <FaGithub aria-hidden="true" /> View on GitHub
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>

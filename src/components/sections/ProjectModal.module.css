@@ -18,7 +18,6 @@
 .simpleModalBackdrop.isClosing {
     animation: simpleModalFadeOut 0.22s cubic-bezier(0.4, 0, 0.2, 1) forwards;
     pointer-events: none;
-    /* Ignore clicks while animating out */
 }
 
 @keyframes simpleModalFadeIn {
@@ -41,12 +40,52 @@
     }
 }
 
-/* Centered Modal Card */
-.simpleModalCard {
+/* Modal Wrapper Container - holds outer close button and content card */
+.simpleModalWrapper {
     position: relative;
     width: 100%;
-    max-width: 620px;
+    max-width: 640px;
     max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    animation: simpleModalSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.simpleModalWrapper.isClosing {
+    animation: simpleModalSlideDown 0.22s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* Close Button - positioned outside and on top of the card */
+.simpleModalClose {
+    align-self: flex-end;
+    margin-bottom: 8px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(15, 23, 42, 0.85);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(4px);
+    flex-shrink: 0;
+}
+
+.simpleModalClose:hover {
+    background: #0f172a;
+    border-color: var(--accent-blue);
+    transform: scale(1.1);
+}
+
+/* Scrollable Modal Card */
+.simpleModalCard {
+    width: 100%;
+    flex: 1 1 auto;
+    min-height: 0;
     overflow-y: auto;
     background: var(--card-bg);
     color: var(--text-main);
@@ -55,11 +94,21 @@
     box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.6);
     display: flex;
     flex-direction: column;
-    animation: simpleModalSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-subtle) transparent;
 }
 
-.simpleModalCard.isClosing {
-    animation: simpleModalSlideDown 0.22s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+.simpleModalCard::-webkit-scrollbar {
+    width: 6px;
+}
+
+.simpleModalCard::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.simpleModalCard::-webkit-scrollbar-thumb {
+    background: var(--border-subtle);
+    border-radius: 999px;
 }
 
 @keyframes simpleModalSlideUp {
@@ -86,36 +135,12 @@
     }
 }
 
-/* Close Button */
-.simpleModalClose {
-    position: absolute;
-    top: 14px;
-    right: 14px;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background: rgba(15, 23, 42, 0.75);
-    color: #ffffff;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    font-size: 1rem;
-    z-index: 10;
-    transition: all 0.2s ease;
-    backdrop-filter: blur(4px);
-}
-
-.simpleModalClose:hover {
-    background: #0f172a;
-    transform: scale(1.08);
-}
-
-/* Banner Image */
+/* Banner Image - min-height and flex-shrink prevent squishing */
 .simpleModalImageWrap {
     width: 100%;
     height: 240px;
+    min-height: 240px;
+    flex-shrink: 0;
     background: #0f172a;
     overflow: hidden;
     position: relative;
@@ -132,7 +157,8 @@
 
 /* Header & Titles */
 .simpleModalHeader {
-    padding: 24px 28px 14px;
+    padding: 22px 28px 12px;
+    flex-shrink: 0;
 }
 
 .simpleModalTitleRow {
@@ -167,15 +193,16 @@
 }
 
 .simpleModalDesc {
-    font-size: 0.95rem;
+    font-size: 0.94rem;
     line-height: 1.65;
     color: var(--text-main);
-    margin-bottom: 20px;
+    margin-bottom: 18px;
 }
 
 .simpleModalTechSection {
     border-top: 1px solid var(--border-color);
-    padding-top: 16px;
+    padding-top: 14px;
+    margin-bottom: 20px;
 }
 
 .simpleModalTechTitle {
@@ -202,6 +229,124 @@
     border: 1px solid var(--border-color);
 }
 
+/* GitHub Repository Stats Section */
+.githubStatsSection {
+    background: var(--card-inner-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 16px 18px;
+    margin-top: 18px;
+}
+
+.githubSectionHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+}
+
+.githubSectionTitle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-heading);
+    font-size: 0.92rem;
+    font-weight: 800;
+    color: var(--text-heading);
+}
+
+.githubLastUpdated {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+/* Metrics Row (Stars, Forks, Last Push) */
+.githubMetricsGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+.metricCard {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 10px 12px;
+}
+
+.metricIconWrap {
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.starIcon {
+    color: var(--accent-gold);
+}
+
+.forkIcon {
+    color: var(--accent-blue);
+}
+
+.clockIcon {
+    color: var(--text-muted);
+}
+
+.metricTextWrap {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.metricValue {
+    font-size: 0.92rem;
+    font-weight: 800;
+    color: var(--text-heading);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.metricLabel {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+/* Language Breakdown Block */
+.languageBreakdownBlock {
+    border-top: 1px solid var(--border-color);
+    padding-top: 12px;
+}
+
+.languageHeader {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+.langIcon {
+    color: var(--accent-blue);
+}
+
+.languageTitle {
+    color: var(--text-heading);
+    font-weight: 700;
+}
+
 /* Modal Footer */
 .simpleModalFooter {
     display: flex;
@@ -213,6 +358,7 @@
     background: var(--card-inner-bg);
     border-bottom-left-radius: 15px;
     border-bottom-right-radius: 15px;
+    flex-shrink: 0;
 }
 
 .simpleModalBtn {
@@ -238,4 +384,23 @@
 .simpleModalBtn.primary:hover {
     background: var(--accent-blue-hover);
     transform: translateY(-1px);
+}
+
+@media (max-width: 600px) {
+    .githubMetricsGrid {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .simpleModalHeader {
+        padding: 18px 20px 10px;
+    }
+
+    .simpleModalBody {
+        padding: 0 20px 20px;
+    }
+
+    .simpleModalFooter {
+        padding: 14px 20px 20px;
+    }
 }
