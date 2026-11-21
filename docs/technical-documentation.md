@@ -1,21 +1,24 @@
 # Technical Documentation: React Architecture & Component Engineering
 
-**Student Name:** Talha Meraj  
+**Author:** Talha Meraj  
 **Student ID:** 202436920  
-**Technology Stack:** React 19, Vite 8, CSS Modules 
+**Technology Stack:** React 19, Vite, CSS Modules, GitHub REST API v3  
 
 ---
 
 ## 1. Architectural Overview & System Design
 
-The application is structured as a modular, component-driven Single-Page Application (SPA) built with **React 19** and bundled with **Vite 8**. The primary design objective was to build a clean, responsive, and accessible personal portfolio from the ground up without relying on third-party UI component frameworks.
+The application is engineered as a modular, component-driven Single-Page Application (SPA) built with **React 19** and bundled with **Vite**. The primary architectural objective is delivering a high-performance, accessible, and responsive personal portfolio without relying on heavy third-party UI component libraries or CSS frameworks.
 
 ### Separation of Concerns
-1. **Entry & Root:** `index.html` loads the root DOM node; `main.jsx` initializes React in Strict Mode; `App.jsx` orchestrates global theme state and top-level layout composition.
-2. **Layout Components (`src/components/layout/`):** Fixed structural wrappers including the top identity hero, sticky navigation bar, and footer.
-3. **Section Components (`src/components/sections/`):** Self-contained, feature-specific sections (About, Projects, ProjectCard, ProjectModal, and Contact).
-4. **Data Layer (`src/data/projectsData.js`):** Centralized data store containing structured project metadata, decoupling content from UI rendering.
-5. **Style Architecture (`*.module.css`):** Scoped CSS Modules for component-level styles combined with global design tokens defined via CSS custom properties in `index.css`.
+1. **Entry & Root:** `index.html` defines the semantic shell; `main.jsx` initializes React in Strict Mode; `App.jsx` orchestrates global theme state, local storage synchronization, and top-level layout composition.
+2. **Layout Components (`src/components/layout/`):** Fixed structural wrappers including the identity hero banner, sticky navigation bar with time-aware greeting, and page footer.
+3. **Section Components (`src/components/sections/`):** Autonomous sections (About, Projects, ProjectCard, ProjectModal, SortInfoModal, and Contact).
+4. **Common UI Components (`src/components/common/`):** Shared visual components such as `LanguageBarChart.jsx` for codebase composition visualizations.
+5. **Data & Service Layer (`src/data/` & `src/services/`):** 
+   - `projectsData.js` supplies structured metadata and fallback values decoupled from rendering logic.
+   - `githubService.js` manages asynchronous communication with the GitHub REST API, implementing two-tier caching and language color mappings.
+6. **Style Architecture (`*.module.css`):** Scoped CSS Modules for component styling combined with global design tokens declared via CSS custom properties in `index.css`.
 
 ---
 
@@ -24,40 +27,39 @@ The application is structured as a modular, component-driven Single-Page Applica
 ```text
 202436920-TalhaMeraj-assignment2/
 ├── docs/
-│   ├── ai-usage-report.md       # AI usage log and mandatory declaration
-│   └── technical-documentation.md # System architecture and component details
+│   ├── ai-usage-report.md          # AI workflow logs, prompts, and verification record
+│   └── technical-documentation.md    # System architecture, API design, and performance audits
 ├── public/
+│   ├── robots.txt                  # Search crawler policy
 │   └── assets/
-│       └── images/              # Project diagrams, hardware photos, and avatars
+│       └── images/                 # Next-gen WebP diagrams, photos, and UI assets
 ├── src/
 │   ├── components/
+│   │   ├── common/
+│   │   │   ├── LanguageBarChart.jsx        # Horizontal segmented language progress bar
+│   │   │   └── LanguageBarChart.module.css
 │   │   ├── layout/
-│   │   │   ├── Hero.jsx         # Header banner with title and academic affiliation
-│   │   │   ├── Hero.module.css
-│   │   │   ├── Navbar.jsx       # Sticky nav with scroll-spy, time-greeting, and theme toggle
-│   │   │   ├── Navbar.module.css
-│   │   │   ├── Footer.jsx       # Dynamic copyright footer
-│   │   │   └── Footer.module.css
+│   │   │   ├── Hero.jsx                    # Header hero banner
+│   │   │   ├── Navbar.jsx                  # Sticky navigation, greeting, and theme toggle
+│   │   │   └── Footer.jsx                  # Page footer
 │   │   └── sections/
-│   │       ├── About.jsx        # Biography, academic profile, and portrait card
-│   │       ├── About.module.css
-│   │       ├── Projects.jsx     # Project gallery, search filter, sort controls, and grid
-│   │       ├── Projects.module.css
-│   │       ├── ProjectCard.jsx  # Interactive 3D hardcover book card
-│   │       ├── ProjectCard.module.css
-│   │       ├── ProjectModal.jsx # Accessible detail modal with scroll-lock
-│   │       ├── ProjectModal.module.css
-│   │       ├── Contact.jsx      # Controlled contact form and details sidebar
-│   │       └── Contact.module.css
+│   │       ├── About.jsx                   # Biography, academic profile, and portrait card
+│   │       ├── Projects.jsx                # Gallery, search filter, 4-way sort, and grid
+│   │       ├── ProjectCard.jsx             # Interactive 3D hardcover book card
+│   │       ├── ProjectModal.jsx            # Detailed modal with live GitHub repository stats
+│   │       ├── SortInfoModal.jsx           # Accessible sort criteria explanation modal
+│   │       └── Contact.jsx                 # Validated form with draft auto-save
 │   ├── data/
-│   │   └── projectsData.js      # Structured array of project objects
-│   ├── App.jsx                  # Root state (theme management) and layout assembly
-│   ├── index.css                # Global design tokens, typography, and base resets
-│   └── main.jsx                 # React root mount point
-├── index.html                   # HTML5 template
-├── package.json                 # Dependency definitions and scripts
-├── vite.config.js               # Vite build configuration
-└── README.md                    # Project overview and setup instructions
+│   │   └── projectsData.js                 # Centralized project dataset with ISO 8601 dates
+│   ├── services/
+│   │   └── githubService.js                # GitHub API client, two-tier cache, and palettes
+│   ├── App.jsx                             # Root component with theme state and sync
+│   ├── index.css                           # Global design tokens, resets, and typography
+│   └── main.jsx                            # React root mount point
+├── index.html                              # HTML5 base template
+├── package.json                            # Dependencies, metadata, and run scripts
+├── vite.config.js                          # Vite build pipeline configuration
+└── README.md                               # Project overview and setup instructions
 ```
 
 ---
@@ -66,129 +68,36 @@ The application is structured as a modular, component-driven Single-Page Applica
 
 ### Component Tree
 - **`App.jsx`** (Root Component)
-  - `Hero.jsx` (Static banner display)
-  - `Navbar.jsx` (Receives `theme` and `toggleTheme` props; manages scroll-spy and greeting)
+  - `Hero.jsx` (Static header presentation)
+  - `Navbar.jsx` (Receives `theme` and `toggleTheme`; manages scroll-spy and greeting)
   - `<main className="main-card">`
-    - `About.jsx` (Bio, education highlights, and portrait card)
-    - `Projects.jsx` (Manages search, sort, and modal states)
-      - `ProjectCard.jsx` (Repeated for each project; passes `onOpen` callback)
-      - `ProjectModal.jsx` (Conditionally rendered when a project is selected; receives `onClose`)
-    - `Contact.jsx` (Autonomous form handling, validation rules, and async feedback)
-  - `Footer.jsx` (Static footer display)
+    - `About.jsx` (Academic background, core interests, and portrait)
+    - `Projects.jsx` (Manages search query, 4-way sorting, live GitHub sync, and selection)
+      - `ProjectCard.jsx` (Mapped for each project; handles 3D interactions and click dispatch)
+      - `ProjectModal.jsx` (Conditionally rendered when selected; fetches repo stats and languages)
+        - `LanguageBarChart.jsx` (Renders proportional language breakdown segments and legend)
+      - `SortInfoModal.jsx` (Conditionally rendered help modal for sorting criteria)
+    - `Contact.jsx` (Self-contained form management, validation rules, and draft persistence)
+  - `Footer.jsx` (Static footer presentation)
 
-### Data & Event Flow
-- **Top-Down Props:** Theme state and the toggle handler are managed in `App.jsx` and passed down to `Navbar.jsx`. In the project catalog, the filtered and sorted list of projects is calculated in `Projects.jsx` and mapped into individual `ProjectCard.jsx` components via props.
-- **Bottom-Up Callbacks:** When a user selects a project card, `ProjectCard.jsx` invokes the `onOpen(project)` callback, which updates the `selectedProject` state in `Projects.jsx` to render `ProjectModal.jsx`. Closing the modal triggers the `onClose` callback to reset the selection to `null`.
-- **Autonomous Component State:** Sections like `Contact.jsx` maintain self-contained state for form data, validation errors, and loading statuses, keeping parent components unburdened by localized interactions.
+### Data & Asynchronous Event Flow
+- **Live GitHub Metrics Pipeline:** On mount, `Projects.jsx` triggers `githubService.getRepositories()`. This queries GitHub's public API to retrieve repository stars, forks, and `pushed_at` timestamps for all public repositories, storing them in component state.
+- **On-Demand Language Breakdown:** When a project modal opens, `ProjectModal.jsx` passes the project's repository name to `githubService.getRepoLanguages()`. The calculated language byte distribution is passed down to `LanguageBarChart.jsx`.
+- **Top-Down Props & State Delegation:** Filtered and sorted project arrays are calculated at the `Projects.jsx` level using a memoized pipeline, then mapped to individual `ProjectCard.jsx` instances.
+- **Bottom-Up Callbacks:** Clicking a book card triggers `onOpen(project)` to mount `ProjectModal.jsx`. Dismissal calls `onClose()` to reset the selection state to `null`.
 
 ---
 
 ## 4. State Management & Subsystems
 
 ### 4.1 Global Theme Management (`App.jsx`)
-The application implements persistent light and dark theming through the following mechanism:
-- **Initialization:** Uses a lazy state initializer reading from `localStorage.getItem('portfolio-theme-v2')`, defaulting to `'dark'`.
-- **DOM Synchronization:** A `useEffect` hook synchronizes the `data-theme` attribute on the `<html>` root element whenever `theme` changes, persisting the latest value to `localStorage`.
-- **Tokenized CSS:** Variables declared in `index.css` adapt automatically:
-  - `:root` defines default dark palette variables (`--bg-primary`, `--card-bg`, `--text-main`, `--accent-blue`).
-  - `[data-theme='light']` overrides those tokens for the light theme with high contrast ratios.
+- **Initialization:** Reads from `localStorage.getItem('portfolio-theme-v2')`, falling back to `'dark'`.
+- **DOM Synchronization:** A `useEffect` hook synchronizes the `data-theme` attribute on the `<html>` root element, updating CSS custom property palettes instantly across all components.
 
 ### 4.2 Navigation & Scroll-Spy Subsystem (`Navbar.jsx`)
-- **Passive Scroll Listener:** Uses `window.addEventListener('scroll', handleScroll, { passive: true })` to eliminate main-thread blocking during scrolling.
-- **Dynamic Offset Detection:** Applies a 140px header offset buffer (`window.scrollY + 140`) to calculate the active section tab relative to element `offsetTop`.
-- **Bottom-of-Page Edge Case:** Includes a boundary check (`window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 70`) ensuring the `#contact` tab correctly activates on shorter viewports.
-- **Contextual Greeting:** Computes local system hour (`new Date().getHours()`) on initial render:
-  - `05:00 - 11:59`: "Good Morning!"
-  - `12:00 - 16:59`: "Good Afternoon!"
-  - `17:00 - 22:59`: "Good Evening!"
-  - `23:00 - 04:59`: "Still up?"
+- **Passive Scroll Listener:** Uses `window.addEventListener('scroll', handleScroll, { passive: true })` to prevent main-thread jank during scrolling.
+- **Offset Buffer:** Incorporates a 140px header offset buffer to match the active navigation link to the element currently in view.
+- **Contextual Greeting:** Evaluates client system time (`new Date().getHours()`) to display personalized greetings (*"Good Morning!"*, *"Good Afternoon!"*, *"Good Evening!"*, *"Still up?"*).
 
----
-
-## 5. Interactive 3D Projects Showcase
-
-### 5.1 Layered 3D Book Anatomy (`ProjectCard.jsx`)
-Each project card is rendered as a physical book utilizing hardware-accelerated CSS 3D transforms:
-- **Back Cover (`.bookBackCover`):** Positioned underneath to provide base depth.
-- **Page Thickness Stack (`.bookPagesStack`):** Multi-layered gradient pseudo-elements simulating paper thickness (`.pagesRightEdge`).
-- **Front Hardcover (`.bookCover`):** Configured with `transform-origin: left center`. On hover or keyboard focus, it executes `transform: rotateY(-35deg)` to swing open, revealing card details.
-- **Visual Details:** Includes a vertical spine strip date badge, realistic spine crease shadow, core tech chips, and an external GitHub repository button.
-- **Keyboard Access:** Implements `role="button"`, `tabIndex={0}`, and handles `Enter` / `Space` keys to open project details.
-
-### 5.2 Memoized Search, Filter & Sort Pipeline (`Projects.jsx`)
-The project dataset is processed through a deterministic pipeline optimized with React's `useMemo` hook:
-1. **Multi-Field Text Search:** Matches search input against project titles, descriptions, categories, and technology tags.
-2. **Multi-Criteria Sorting:**
-   - **Featured:** Sorts by assigned numerical priority score, with chronological date tiebreaking.
-   - **Title:** Alphabetical comparison via `localeCompare()`.
-   - **Date:** Chronological comparison using parsed date objects.
-   - **Direction:** Dynamic Ascending / Descending order toggle.
-
-### 5.3 Accessible Modal Dialog (`ProjectModal.jsx`)
-- **Scroll Lock:** Locks parent page scrolling upon mount (`document.body.style.overflow = 'hidden'`) and restores previous overflow on unmount.
-- **Synchronized Exit Animation:** Manages an internal `isClosing` state to play a 220ms smooth exit transition before unmounting from parent state.
-- **Dismissal Triggers:** Closes on `Escape` keypress, background backdrop click (with `e.stopPropagation()` on card content), or explicit close button click.
-- **ARIA Semantics:** Configured with `role="dialog"`, `aria-modal="true"`, and `aria-labelledby="modalProjectTitle"`.
-
----
-
-## 6. Form Handling & Multi-Tier Validation (`Contact.jsx`)
-
-The contact section implements a controlled form interface with real-time feedback and asynchronous submission simulation.
-
-### 6.1 Validation Engine
-- **Name Field:** Validates that input is not empty, meets a minimum length of 2 characters, and matches `/^[a-zA-Z\s\-'.]+$/` to restrict invalid symbols.
-- **Email Field:** Validates against standard RFC pattern `/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/`.
-- **Message Field:** Requires a minimum of 10 characters for adequate context, enforces a maximum length of 500 characters, and updates a live character counter `(current / 500)`.
-
-### 6.2 Interaction Flow & Accessibility
-- **Timing:** Errors appear only after input blur or form submission attempt, avoiding premature error states while the user is actively typing.
-- **Immediate Recovery:** Errors clear immediately as the user modifies the invalid field.
-- **Auto-Focus:** Submitting an invalid form automatically moves DOM focus to the first invalid field.
-- **Async Simulation:** Disables form controls, displays a loading spinner (`FaSpinner`), simulates network latency, presents an accessible success banner, resets form state, and auto-dismisses the alert after 5 seconds.
-
----
-
-## 7. Performance Auditing & Lighthouse Benchmark
-
-The application was audited using Google Chrome Lighthouse in production preview mode to verify compliance with performance, accessibility, best practices, and SEO standards.
-
-### Lighthouse Audit Scores
-
-| Category | Score | Status |
-| :--- | :--- | :--- |
-| **Performance** | **91 / 100** | Passed (Green) |
-| **Accessibility** | **96 / 100** | Passed (Green) |
-| **Best Practices** | **100 / 100** | Passed (Green) |
-| **SEO** | **100 / 100** | Passed (Green) |
-
-### Key Performance Metrics
-- **First Contentful Paint (FCP):** ~0.9s
-- **Total Blocking Time (TBT):** ~30ms
-- **Cumulative Layout Shift (CLS):** 0.00 (Zero layout shifts due to explicit image aspect-ratios)
-- **Speed Index:** ~1.4s
-
-### Performance Analysis & Future Optimization Roadmap
-While the current score of **91** demonstrates strong performance, the audit highlighted opportunities for future releases:
-1. **Next-Generation Image Formats:** Several project screenshot assets currently use standard PNG/JPG formats. Future iterations will convert all media assets to modern **WebP** and **AVIF** formats, reducing image payload sizes by an estimated 40–60%.
-2. **Library Loading & Dynamic Code Splitting:** Currently, font and icon bundles (`react-icons/fa6`) are packaged in the main vendor chunk. Future updates will introduce dynamic code-splitting (`React.lazy` and `Suspense`) for the modal dialog and heavy components, ensuring users only download assets as needed and improving the First Contentful Paint.
-3. **Responsive Image Delivery:** Incorporating HTML5 `<picture>` elements with `srcset` attributes to deliver appropriately scaled images based on client viewport density.
-
----
-
-## 8. Build & Production Verification
-
-The project compiles into an optimized production bundle via the Vite build pipeline (`npm run build`):
-
-```text
-vite v8.3.5 building client environment for production...
-✓ 38 modules transformed.
-dist/index.html                   0.79 kB │ gzip:  0.44 kB
-dist/assets/index-htOfz76o.css   27.01 kB │ gzip:  6.34 kB
-dist/assets/index-BS2d-lt_.js   267.89 kB │ gzip: 83.93 kB
-✓ built in 1.25s
-```
-
-- **CSS Optimization:** All CSS Modules are concatenated, minified, and scoped with zero runtime CSS overhead.
-- **Dead-Code Elimination:** Unused icon glyphs and code paths are stripped during compilation.
-- **Browser Compatibility:** Verified across current versions of Google Chrome, Microsoft Edge, Mozilla Firefox, and Apple Safari.
+### 4.3 GitHub REST API & Two-Tier Caching Subsystem (`githubService.js`)
+To integrate live GitHub statistics while strictly honoring GitHub's unauthenticated rate limit (60 requests/hour), the service implements a robust two-tier caching architecture:

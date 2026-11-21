@@ -1,6 +1,6 @@
 # AI Usage & Collaborative Engineering Report
 
-**Assignment:** Assignment 2 – Interactive Features  
+**Assignment:** Assignment 3 – Advanced Features  
 **Student Name:** Talha Meraj  
 **Student ID:** 202436920  
 
@@ -12,7 +12,7 @@
 
 **Student Name:** Talha Meraj  
 **Student ID:** 202436920  
-**Date:** October 23, 2026  
+**Date:** November 21, 2026  
 **Signature:** *Talha Meraj*  
 
 ---
@@ -21,61 +21,58 @@
 
 | ID | Tool (model) | Date | Purpose | Files affected | What you changed and how you verified it |
 |:---|:---|:---|:---|:---|:---|
-| **C01** | Antigravity IDE (Gemini 3.8 Flash) | 22-Oct-2026 | Assist in migrating vanilla HTML/CSS/JS portfolio into a Vite React App. | `index.html`, `vite.config.js`, `src/App.jsx`, `src/main.jsx`, `src/index.css`, `package.json` | Changed recommended tsx format to jsx. Structured component folders into `layout/` and `sections/`. Ported some code from assignment-1 to this new folder. Verified the final code by running `npm run dev` and confirming the base app displays in the browser. |
-| **C02** | Antigravity IDE (Gemini 3.8 Flash) | 22-Oct-2026 | Help in porting layout components (Hero, Navbar, Footer) and about section from assignment 1 vanilla HTML/CSS/JS to modular React, and configuring theme switching and storage in localStorage. | `src/App.jsx`, `src/index.css`, `src/components/layout/Hero.jsx`, `src/components/layout/Hero.module.css`, `src/components/layout/Navbar.jsx`, `src/components/layout/Navbar.module.css`, `src/components/layout/Footer.jsx`, `src/components/layout/Footer.module.css`, `src/components/sections/About.jsx`, `src/components/sections/About.module.css` | Refactored assignment-1 `styles.css` into individual CSS Modules for Hero, Navbar, Footer, and About, and reduced `index.css` to global design tokens and layout shells. Implemented dark/light theme toggling with localStorage sync in `App.jsx`. Replaced CDN FontAwesome with `react-icons/fa6`. Resolved a Vite build crash by moving images from `src/assets` to `public/assets/images` and updating image paths. Verified in Chrome and confirmed zero console errors, tested day/night background switching, and verified sticky navbar active section highlighting during scroll in the browser. |
-| **C03** | Antigravity IDE (Gemini 3.8 Flash) | 23-Oct-2026 | Assist in designing and implementing the Projects section with 3D perspective hardcover book cards, stacked paper page edges, search filtering, sorting with reversible directions, row collapse with smooth scrolling, and a project details modal. | `src/data/projectsData.js`, `src/components/sections/ProjectCard.jsx`, `src/components/sections/ProjectCard.module.css`, `src/components/sections/ProjectModal.jsx`, `src/components/sections/ProjectModal.module.css`, `src/components/sections/Projects.jsx`, `src/components/sections/Projects.module.css`, `src/App.jsx` | Extracted seven projects from GitHub with metadata and tags. Created a three-layer 3D book component using CSS perspective and cubic-bezier swing physics. Resolved a modal backdrop click-interception bug by resetting closing state on project change and implementing conditional mounting. Built a search and multi-sort pipeline. Verified functionality in the browser by testing live search queries, sort direction toggles, and modal dialog open, close, and keyboard input responses. |
-| **C04** | Antigravity IDE (Gemini 3.8 Flash) | 23-Oct-2026 | Assisting in the implementation of the website contact section with a contact form, real-time input validation, 500-character counter, simulated asynchronous submission. | `src/components/sections/Contact.jsx`, `src/components/sections/Contact.module.css`, `src/App.jsx` | Built a contact section for my react app with name, email and message inputs. Ported some of the css and html codes from assignment-1's vanilla HTML/CSS/JS website and modified it to fit the react app. Applied dark mode themes to the ported designs. Tested all newly added features by running `npm run dev` and interacting with the new elements, finally fixed any bugs that came to light during testing. |
-| **C05** | Antigravity IDE (Gemini 3.8 Flash) | 23-Oct-2026 | Assisting in writing the documentation for the project. | `README.md`, `docs/technical-documentation.md`, `docs/ai-usage-report.md` | Added readme, technical documentation and ai usage report. All documentation generated was proofread and edited wherever necessary. |
+| **C01** | Antigravity IDE (Gemini 3.8 Flash) | 20-Nov-2026 | Cross-browser date bug fix, GitHub REST API integration with 15m TTL caching, horizontal language bar chart, client state persistence, Lighthouse 100% optimization, and mobile responsiveness | src/data/projectsData.js, src/services/githubService.js, src/components/common/LanguageBarChart.jsx, src/components/common/LanguageBarChart.module.css, src/components/sections/ProjectModal.jsx, src/components/sections/Projects.jsx, src/components/sections/Projects.module.css, src/components/sections/SortInfoModal.jsx, src/components/sections/SortInfoModal.module.css, src/components/sections/Contact.jsx, src/components/sections/Contact.module.css, src/components/sections/About.module.css, src/components/layout/Navbar.module.css, public/robots.txt, index.html, src/index.css, documentation| Diagnosed and fixed Safari Invalid Date sorting bug by converting dates to ISO 8601 strings. Built and integrated githubService.js with localStorage caching and stale-fallback resilience. Added custom extractRepoName edge-case handling for profile URLs. Lifted state to Projects.jsx and added dynamic sort by live GitHub push activity. Implemented draft auto-save and banner recovery in Contact.jsx. Diagnosed and resolved 23 robots.txt syntax errors by creating public/robots.txt. Converted assets to WebP and fixed light-mode contrast. Fixed mobile navbar tab clipping, bullet alignment, and horizontal swipe sort pills. Verified via npm run lint (0 errors), npm run build, and Chrome Lighthouse audit. All code generated by AI was reviewed and edited as per requirements. All code was testing using a vite dev server that was running at all times during programming. This conversations also includes documentation assistance which was also verified fully before commiting|
+
 
 ---
 
 ## 3. Overview of AI Integration
 
-Artificial intelligence (Antigravity IDE powered by Gemini 3.8 Flash) was used as an interactive pair-programming assistant throughout the development of Assignment 2:
-1. **Migration & Component Architecture:** Scaffolding the initial Vite setup, defining folder structures (`layout/`, `sections/`, `data/`), and converting vanilla elements into reusable React components.
-2. **CSS 3D Transforms & Animations:** Assisting with the perspective math and rotation parameters for the 3D book cover tilt and page stack illusion.
-3. **State Management & Pipelines:** Assisting in structuring client-side filter and sorting logic with React hooks (`useMemo`, `useState`, `useEffect`).
-4. **Form Handling & Validation:** Writing input validation logic (email regex, name character constraints, and 500-character boundary tracking).
-5. **Documentation Support:** Structuring the technical documentation and formatting development logs into clear Markdown files.
+Artificial intelligence (Antigravity IDE powered by Gemini 3.8 Flash) was used as an interactive pair-programming assistant throughout the development of Assignment 3:
+1. **Bug Diagnostics & Root Cause Analysis:** Identifying the exact cause of Safari-specific `NaN` date sorting failures and locating why Vite SPA fallback caused 23 syntax errors during Lighthouse `robots.txt` audits.
+2. **Architectural Scaffolding:** Designing the 15-minute TTL caching pipeline for the GitHub REST API (`githubService.js`) and designing a reusable, accessible presentation component (`LanguageBarChart.jsx`).
+3. **State Management & Async Resilience:** Implementing race-condition prevention using the boolean cleanup flag pattern (`isSubscribed`) and architecting two-way draft recovery in the contact form.
+4. **Performance Auditing:** Guiding image conversion to next-gen WebP formats and tuning CSS media queries for mobile viewports.
 
 ---
 
 ## 4. Critical Evaluation: Benefits, Challenges & Human Adjustments
 
 ### Observed Benefits
-- **Faster Architectural Transitions:** Accelerated porting legacy code from Assignment 1 into modern React 19 components and CSS Modules.
-- **Creative UI Engineering:** Quickly prototyped 3D CSS transform ideas that transformed flat project tiles into interactive books.
-- **Immediate Bug Isolation:** Accelerated diagnosing build issues, such as static asset bundling errors in Vite.
+- **Accelerated API Protocol Alignment:** AI clarified the exact vendor MIME type (`application/vnd.github.v3+json`) and pagination parameters (`?per_page=100`) recommended by GitHub's official REST documentation, saving trial-and-error API requests.
+- **Architectural Clarity:** Pair-programming helped implement the *Stale-While-Revalidate* cache pattern in pure vanilla JavaScript and `localStorage`, ensuring the app never fails even if offline.
+- **Precision Diagnostics:** Instead of blindly guessing why mobile viewports overflowed or why SEO was capped at 92%, AI isolated the exact CSS constraints and missing server files.
 
 ### Challenges Encountered & How They Were Resolved
-1. **Asset Path Failures in Vite:**
-   - *Problem:* AI initially recommended keeping project images in `src/assets/`, which caused broken image links in Vite production builds.
-   - *Resolution:* Moved all images to `public/assets/images/` and updated reference paths to absolute URLs (`/assets/images/...`).
-2. **CSS 3D Perspective & Stacking Contexts:**
-   - *Problem:* Initial CSS 3D transforms caused the swinging front cover of the book to clip through adjacent grid elements on tablet viewports.
-   - *Resolution:* Added `transform-style: preserve-3d` to the book container, set explicit `perspective: 1200px` on parent containers, and adjusted z-index layering.
-3. **Modal Backdrop Interception:**
-   - *Problem:* Fast consecutive clicks on different project cards occasionally trapped the modal in an `isClosing` state, preventing new modals from opening.
-   - *Resolution:* Re-engineered `ProjectModal.jsx` to reset closing state variables on project change and properly synchronize exit transitions with unmounting.
-4. **Scroll-Spy Accuracy:**
-   - *Problem:* Sticky navbar height caused section detection to trigger prematurely during scrolling.
-   - *Resolution:* Tuned scroll offset calculation (+140px) and added a bottom-of-page condition to ensure the Contact tab highlights properly.
+1. **GitHub Profile URL Edge-Case Bug:**
+   - *Problem:* The initial URL parsing regex took the last segment of the repo URL. When tested against `https://github.com/merajtalha` (the portfolio's main profile link), it extracted `"merajtalha"` as a repository name, causing failed 404 API calls to `/repos/merajtalha/merajtalha/languages`.
+   - *Modification:* I updated `extractRepoName` to enforce a minimum of 5 URL path segments (`parts.length >= 5`) and strip trailing `.git` extensions, returning `null` safely for profile-only links.
+2. **React 19 Linting Rules (`react-hooks/set-state-in-effect`):**
+   - *Problem:* Synchronously resetting modal states and draft recovery flags inside `useEffect` bodies triggered React 19 linter warnings about cascading re-renders.
+   - *Modification:* Refactored state initialization to use lazy initializer functions (`useState(() => ...)`), reading `localStorage` directly upon component mount and keeping effects pure.
+3. **Architecture Choice on State Lifting:**
+   - *Problem:* AI initially suggested fetching repo data directly inside `ProjectModal`.
+   - *Modification:* I decided to lift state up into `Projects.jsx` instead, allowing the parent component to fetch all repositories once on mount, share the map down via props, and support a 4th dynamic sorting mode (`updated` by GitHub activity).
+4. **Mobile Navbar Tab Metaphor Severance:**
+   - *Problem:* Stacking the navbar vertically on mobile caused the dark social icons row to sit between the active tab and the white main card, breaking the visual folder-tab connection.
+   - *Modification:* Inverted the mobile flex order (`order: 1` on socials, `order: 2` on nav links) so the active tab connects seamlessly to the content card below it.
 
 ---
 
 ## 5. Verification & Code Comprehension Methodology
 
-In accordance with KFUPM academic integrity standards:
-- **Independent Testing:** Every component, hook, and CSS module was reviewed and tested manually using `npm run dev` and `npm run preview`.
-- **Accessibility & Keyboard Testing:** Verified that all interactive features (theme toggle, 3D book opening, modal popup, contact form) are fully operable via keyboard (`Tab`, `Space`, `Enter`, `Escape`).
-- **Audit Logging:** All raw conversation transcripts (`C01.md`, `C02.md`, `C03.md`, `C04.md`, and `C05.md`) are archived in the required evidence archive (`202436920-TalhaMeraj-assignment2-ai-evidence.zip`) for submission on Blackboard.
+To ensure academic integrity, robust code quality, and deep understanding:
+- **Linter Verification:** Continuously ran `npm run lint` across the entire workspace, ensuring strict compliance with ESLint 10, React Hooks, and Vite configurations (0 errors, 0 warnings).
+- **Production Build Testing:** Executed `npm run build` and `npm run preview` to verify that Rollup bundling, CSS Module hashing, and asset paths resolve cleanly for production.
+- **Lighthouse Performance Benchmarking:** Executed audits in Chrome DevTools under Incognito mode across mobile and desktop emulation, confirming **100% Performance, 100% Accessibility, 100% Best Practices, and 100% SEO**.
+- **Real-Device Testing:** Tested interactions on both desktop and mobile viewports, verifying touch scrolling on sort chips, focus-trapping on modals, and keyboard accessibility via `Tab` and `Escape`.
 
 ---
 
 ## 6. Learning Outcomes & Professional Reflection
 
-Working collaboratively with AI tools during Assignment 2 enhanced my technical knowledge:
-- Gained a solid understanding of React 19 state management, controlled inputs, and performance optimization with `useMemo`.
-- Mastered component-scoped styling using CSS Modules, preventing style leakage.
-- Learned to approach AI outputs critically: recognizing that AI code serves as an initial draft that requires human review, validation, and debugging to meet professional standards.
-
+Completing Assignment 3 with AI assistance reinforced several key engineering concepts:
+- **Rate-Limiting & High Availability:** Learned how to design client-side caching with Time-To-Live (TTL) expiration and stale-cache fallbacks to deliver instant load times while respecting third-party API quotas.
+- **Asynchronous Lifecycle Handling:** Mastered the cleanup flag pattern (`isSubscribed`) to prevent race conditions and memory leaks when dealing with async promises in React components.
+- **Specification Strictness:** Gained insight into browser engine discrepancies—such as why WebKit/Safari rejects non-ISO date formats that Chrome leniently parses—reinforcing the importance of adhering to formal standards like ISO 8601.
+- **Autonomous Review:** Recognized that AI is most effective when guided by human engineering decisions: reviewing generated snippets, checking linter output, and adapting code to suit project architecture.
