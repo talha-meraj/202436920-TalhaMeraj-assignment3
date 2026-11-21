@@ -110,7 +110,7 @@ export default function Projects() {
                 project.title.toLowerCase().includes(q) ||
                 project.desc.toLowerCase().includes(q) ||
                 project.categoryLabel.toLowerCase().includes(q) ||
-                project.tags.some((tag) => tag.toLowerCase().includes(tag))
+                project.tags.some((tag) => tag.toLowerCase().includes(q))
             );
         });
 

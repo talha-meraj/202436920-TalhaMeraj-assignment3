@@ -227,7 +227,7 @@ export default function ProjectModal({
                                     <div className={styles.githubErrorNotice} role="status">
                                         <FaTriangleExclamation className={styles.githubErrorIcon} aria-hidden="true" />
                                         <div className={styles.githubErrorText}>
-                                            <strong>The GitHub API cannot be reached at the moment.</strong>
+                                            <strong>The GitHub API cannot be reached at the moment. Please check your Internet Connection.</strong>
                                             <span>
                                                 {gitHubError || 'Live repository metrics and codebase composition are temporarily unavailable. You can still view the project directly on GitHub below.'}
                                             </span>
