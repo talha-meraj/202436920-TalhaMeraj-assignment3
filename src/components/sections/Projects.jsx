@@ -63,7 +63,8 @@ export default function Projects() {
     const [gitHubData, setGitHubData] = useState({
         reposMap: {},
         status: 'loading',
-        lastFetched: null
+        lastFetched: null,
+        error: null
     });
 
     // 6. Number of items per row (responsive)
@@ -109,7 +110,7 @@ export default function Projects() {
                 project.title.toLowerCase().includes(q) ||
                 project.desc.toLowerCase().includes(q) ||
                 project.categoryLabel.toLowerCase().includes(q) ||
-                project.tags.some((tag) => tag.toLowerCase().includes(q))
+                project.tags.some((tag) => tag.toLowerCase().includes(tag))
             );
         });
 
@@ -323,6 +324,8 @@ export default function Projects() {
                     key={selectedProject.id}
                     project={selectedProject}
                     gitHubReposMap={gitHubData.reposMap}
+                    gitHubStatus={gitHubData.status}
+                    gitHubError={gitHubData.error}
                     onClose={() => setSelectedProject(null)}
                 />
             )}

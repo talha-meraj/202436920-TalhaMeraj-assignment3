@@ -5,13 +5,20 @@ import {
     FaStar,
     FaCodeFork,
     FaClock,
-    FaCode
+    FaCode,
+    FaTriangleExclamation
 } from 'react-icons/fa6';
 import { extractRepoName, fetchRepoLanguages } from '../../services/githubService';
 import LanguageBarChart from '../common/LanguageBarChart';
 import styles from './ProjectModal.module.css';
 
-export default function ProjectModal({ project, gitHubReposMap = {}, onClose }) {
+export default function ProjectModal({
+    project,
+    gitHubReposMap = {},
+    gitHubStatus = 'idle',
+    gitHubError = null,
+    onClose
+}) {
     // Track if modal is currently playing its closing animation
     const [isClosing, setIsClosing] = useState(false);
     // Ref prevents triggering the close function multiple times while animation plays
@@ -33,6 +40,7 @@ export default function ProjectModal({ project, gitHubReposMap = {}, onClose }) 
 
     // Extract repo details for this project
     const repoName = project ? extractRepoName(project.repoUrl) : null;
+    const hasRepo = Boolean(project?.repoUrl || project?.githubUrl);
     const repoStats = repoName && gitHubReposMap ? gitHubReposMap[repoName] : null;
 
     useEffect(() => {
@@ -148,65 +156,84 @@ export default function ProjectModal({ project, gitHubReposMap = {}, onClose }) 
                             </div>
                         </div>
 
-                        {/* Live GitHub Repository Stats Section (only rendered if repository data is found) */}
-                        {repoStats && (
+                        {/* Live GitHub Repository Stats Section */}
+                        {hasRepo && (
                             <div className={styles.githubStatsSection}>
                                 <div className={styles.githubSectionHeader}>
                                     <div className={styles.githubSectionTitle}>
                                         <FaGithub aria-hidden="true" />
                                         <span>GitHub Repository Stats</span>
                                     </div>
-                                    {formattedPushedDate && (
+                                    {formattedPushedDate && repoStats && (
                                         <span className={styles.githubLastUpdated}>
                                             Updated {formattedPushedDate}
                                         </span>
                                     )}
                                 </div>
 
-                                {/* Stats Metrics Row */}
-                                <div className={styles.githubMetricsGrid}>
-                                    <div className={styles.metricCard}>
-                                        <div className={styles.metricIconWrap}>
-                                            <FaStar className={styles.starIcon} aria-hidden="true" />
-                                        </div>
-                                        <div className={styles.metricTextWrap}>
-                                            <span className={styles.metricValue}>{repoStats.stars}</span>
-                                            <span className={styles.metricLabel}>Stars</span>
-                                        </div>
-                                    </div>
+                                {repoStats ? (
+                                    <>
+                                        {/* Stats Metrics Row */}
+                                        <div className={styles.githubMetricsGrid}>
+                                            <div className={styles.metricCard}>
+                                                <div className={styles.metricIconWrap}>
+                                                    <FaStar className={styles.starIcon} aria-hidden="true" />
+                                                </div>
+                                                <div className={styles.metricTextWrap}>
+                                                    <span className={styles.metricValue}>{repoStats.stars}</span>
+                                                    <span className={styles.metricLabel}>Stars</span>
+                                                </div>
+                                            </div>
 
-                                    <div className={styles.metricCard}>
-                                        <div className={styles.metricIconWrap}>
-                                            <FaCodeFork className={styles.forkIcon} aria-hidden="true" />
-                                        </div>
-                                        <div className={styles.metricTextWrap}>
-                                            <span className={styles.metricValue}>{repoStats.forks}</span>
-                                            <span className={styles.metricLabel}>Forks</span>
-                                        </div>
-                                    </div>
+                                            <div className={styles.metricCard}>
+                                                <div className={styles.metricIconWrap}>
+                                                    <FaCodeFork className={styles.forkIcon} aria-hidden="true" />
+                                                </div>
+                                                <div className={styles.metricTextWrap}>
+                                                    <span className={styles.metricValue}>{repoStats.forks}</span>
+                                                    <span className={styles.metricLabel}>Forks</span>
+                                                </div>
+                                            </div>
 
-                                    <div className={styles.metricCard}>
-                                        <div className={styles.metricIconWrap}>
-                                            <FaClock className={styles.clockIcon} aria-hidden="true" />
+                                            <div className={styles.metricCard}>
+                                                <div className={styles.metricIconWrap}>
+                                                    <FaClock className={styles.clockIcon} aria-hidden="true" />
+                                                </div>
+                                                <div className={styles.metricTextWrap}>
+                                                    <span className={styles.metricValue}>{formattedPushedDate || 'Recent'}</span>
+                                                    <span className={styles.metricLabel}>Last Push</span>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div className={styles.metricTextWrap}>
-                                            <span className={styles.metricValue}>{formattedPushedDate || 'Recent'}</span>
-                                            <span className={styles.metricLabel}>Last Push</span>
-                                        </div>
-                                    </div>
-                                </div>
 
-                                {/* Codebase Language Breakdown (Horizontal Bar Chart) */}
-                                <div className={styles.languageBreakdownBlock}>
-                                    <div className={styles.languageHeader}>
-                                        <FaCode className={styles.langIcon} aria-hidden="true" />
-                                        <span className={styles.languageTitle}>Codebase Composition</span>
+                                        {/* Codebase Language Breakdown (Horizontal Bar Chart) */}
+                                        <div className={styles.languageBreakdownBlock}>
+                                            <div className={styles.languageHeader}>
+                                                <FaCode className={styles.langIcon} aria-hidden="true" />
+                                                <span className={styles.languageTitle}>Codebase Composition</span>
+                                            </div>
+                                            <LanguageBarChart
+                                                languages={languages}
+                                                isLoading={isLoadingLanguages}
+                                            />
+                                        </div>
+                                    </>
+                                ) : gitHubStatus === 'loading' ? (
+                                    <div className={styles.githubStatusNotice} role="status">
+                                        <span className={styles.githubSpinner} aria-hidden="true" />
+                                        <span>Connecting to GitHub API...</span>
                                     </div>
-                                    <LanguageBarChart
-                                        languages={languages}
-                                        isLoading={isLoadingLanguages}
-                                    />
-                                </div>
+                                ) : (
+                                    <div className={styles.githubErrorNotice} role="status">
+                                        <FaTriangleExclamation className={styles.githubErrorIcon} aria-hidden="true" />
+                                        <div className={styles.githubErrorText}>
+                                            <strong>The GitHub API cannot be reached at the moment.</strong>
+                                            <span>
+                                                {gitHubError || 'Live repository metrics and codebase composition are temporarily unavailable. You can still view the project directly on GitHub below.'}
+                                            </span>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         )}
                     </div>

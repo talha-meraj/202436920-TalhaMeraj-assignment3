@@ -32,7 +32,7 @@ export function getLanguageColor(languageName) {
 
 /**
  * Extract repository name from a GitHub repository URL
-*/
+ */
 export function extractRepoName(url) {
     if (!url) return null;
     const parts = url.trim().replace(/\/+$/, '').split('/');
@@ -42,7 +42,7 @@ export function extractRepoName(url) {
 
 /**
  * Fetch all public repositories for the configured user.
-*/
+ */
 export async function fetchGitHubRepos() {
     // Check local storage cache
     let cached = null;
@@ -66,13 +66,20 @@ export async function fetchGitHubRepos() {
         };
     }
 
+    // Set a fast 3.5s timeout so network stalls do not delay the application
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 3500);
+
     // Fetch live data from GitHub REST API
     try {
         const response = await fetch(`https://api.github.com/users/${GITHUB_USERNAME}/repos?per_page=100`, {
             headers: {
                 'Accept': 'application/vnd.github.v3+json'
-            }
+            },
+            signal: controller.signal
         });
+
+        clearTimeout(timeoutId);
 
         if (!response.ok) {
             throw new Error(`GitHub API responded with HTTP ${response.status}`);
@@ -115,7 +122,8 @@ export async function fetchGitHubRepos() {
             lastFetched: Date.now()
         };
     } catch (err) {
-        console.warn('GitHub API fetch failed, checking fallback cache:', err);
+        clearTimeout(timeoutId);
+        console.warn('GitHub API fetch failed or timed out:', err);
 
         // If network fetch fails but we had an older cache, return the stale cache
         if (cached && cached.data) {
@@ -132,7 +140,7 @@ export async function fetchGitHubRepos() {
             reposMap: {},
             status: 'offline',
             lastFetched: null,
-            error: 'GitHub stats currently unavailable. Please check your network or try again later.'
+            error: 'GitHub API cannot be reached at the moment.'
         };
     }
 }
@@ -154,12 +162,19 @@ export async function fetchRepoLanguages(repoName, fallbackPrimaryLanguage = nul
         return languagesCache.get(cleanName);
     }
 
+    // Set a fast 3.5s timeout for repository language breakdowns
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 3500);
+
     try {
         const response = await fetch(`https://api.github.com/repos/${GITHUB_USERNAME}/${repoName}/languages`, {
             headers: {
                 'Accept': 'application/vnd.github.v3+json'
-            }
+            },
+            signal: controller.signal
         });
+
+        clearTimeout(timeoutId);
 
         if (!response.ok) {
             throw new Error(`Failed to fetch languages (HTTP ${response.status})`);
@@ -184,6 +199,7 @@ export async function fetchRepoLanguages(repoName, fallbackPrimaryLanguage = nul
         languagesCache.set(cleanName, list);
         return list;
     } catch {
+        clearTimeout(timeoutId);
         // Fallback to single primary language bar
         const fallback = buildFallbackLanguages(fallbackPrimaryLanguage);
         languagesCache.set(cleanName, fallback);
