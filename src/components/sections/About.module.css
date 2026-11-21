@@ -96,7 +96,20 @@
         height: 190px;
     }
 
+    .aboutBulletList {
+        width: 100%;
+        max-width: 480px;
+        margin: 18px auto 0 auto;
+        text-align: left;
+    }
+
     .aboutBulletList li {
-        justify-content: center;
+        justify-content: flex-start;
+        align-items: flex-start;
+        text-align: left;
+    }
+
+    .listIcon {
+        margin-top: 3px;
     }
 }

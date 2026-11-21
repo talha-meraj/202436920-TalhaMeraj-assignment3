@@ -298,3 +298,46 @@
     transform: translateY(-2px);
     box-shadow: 0 8px 28px rgba(251, 191, 36, 0.45);
 }
+
+@media (max-width: 600px) {
+    .projectControls {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 14px;
+    }
+
+    .sortGroup {
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        padding-bottom: 4px;
+        gap: 6px;
+        width: 100%;
+    }
+
+    .sortGroup::-webkit-scrollbar {
+        display: none;
+    }
+
+    .sortGroupLabel {
+        flex-shrink: 0;
+        font-size: 0.74rem;
+    }
+
+    .sortPill {
+        flex-shrink: 0;
+        padding: 6px 11px;
+        font-size: 0.78rem;
+    }
+
+    .btnSortInfo {
+        flex-shrink: 0;
+    }
+
+    .searchBoxWrap {
+        max-width: 100%;
+        width: 100%;
+    }
+}
