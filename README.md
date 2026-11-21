@@ -72,7 +72,7 @@ The site is built from scratch as a clean, responsive single-page application. R
 ## 4. Project Structure
 
 ```text
-202436920-TalhaMeraj-assignment2/
+202436920-TalhaMeraj-assignment3/
 ├── docs/
 │   ├── ai-usage-report.md          # AI development logs and prompts
 │   └── technical-documentation.md    # System architecture and technical reference
