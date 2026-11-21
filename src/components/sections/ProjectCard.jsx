@@ -68,12 +68,12 @@ export default function ProjectCard({ project, onOpen }) {
                         <div className={styles.coverBottomRow}>
                             <div className={styles.coverChipsGroup}>
                                 <span className={styles.coverChipsLabel}>
-                                    <FaLayerGroup aria-hidden="true" /> Core Tech:
+                                    <FaLayerGroup aria-hidden="true" /> Key Topics:
                                 </span>
                                 <div className={styles.coverChips}>
-                                    {project.chips.slice(0, 3).map((chip, idx) => (
+                                    {(project.tags || project.chips || []).map((tag, idx) => (
                                         <span key={idx} className={styles.techChip}>
-                                            {chip}
+                                            {tag}
                                         </span>
                                     ))}
                                 </div>
