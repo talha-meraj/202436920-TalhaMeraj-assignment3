@@ -12,7 +12,7 @@
    - repoUrl: Optional GitHub link for repository statistics and external linking
 */
 
-export const projectsData = [
+export const PROJECTS_DATA = [
     {
         id: "16-bit-pipelined-processor",
         title: "16-Bit Pipelined Processor",
