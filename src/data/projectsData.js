@@ -4,6 +4,7 @@ Each project object includes:
 - title, desc: Used for card display and search filtering
 - category, categoryLabel: Categorization (hardware/software)
 - date: Formatted date string (e.g. 'OCT 2026') used for display and sorting
+- isoDate: Standard ISO 8601 date string (YYYY-MM-DD) for reliable cross-browser chronological sorting
 - featured: Numeric priority score (higher score = higher priority in featured sort)
 - theme: CSS class defining the spine and cover color gradient
 - image, imageAlt: Image path and accessible description
@@ -17,6 +18,7 @@ export const PROJECTS_DATA = [
         category: "hardware",
         categoryLabel: "Hardware / Computer Architecture",
         date: "DEC 2024",
+        isoDate: "2024-12-01",
         featured: 98,
         theme: "theme-sapphire",
         image: "/assets/images/16-bit-pipelined-processor.png",
@@ -32,6 +34,7 @@ export const PROJECTS_DATA = [
         category: "software",
         categoryLabel: "Software / Web",
         date: "OCT 2026",
+        isoDate: "2026-10-01",
         featured: 92,
         theme: "theme-navy",
         image: "/assets/images/kfupm-bg.png",
@@ -47,6 +50,7 @@ export const PROJECTS_DATA = [
         category: "hardware",
         categoryLabel: "Digital Logic / FPGA Design",
         date: "MAY 2025",
+        isoDate: "2025-05-01",
         featured: 88,
         theme: "theme-emerald",
         image: "/assets/images/artix7-fpga.png",
@@ -62,6 +66,7 @@ export const PROJECTS_DATA = [
         category: "hardware",
         categoryLabel: "Computer Systems / Low-Level Math",
         date: "JUN 2026",
+        isoDate: "2026-06-01",
         featured: 82,
         theme: "theme-terracotta",
         image: "/assets/images/bfloat16-diagram.png",
@@ -77,6 +82,7 @@ export const PROJECTS_DATA = [
         category: "hardware",
         categoryLabel: "Low-Level Computing / Assembly",
         date: "JUN 2026",
+        isoDate: "2026-06-01",
         featured: 78,
         theme: "theme-indigo",
         image: "/assets/images/mips-die.png",
@@ -92,6 +98,7 @@ export const PROJECTS_DATA = [
         category: "software",
         categoryLabel: "Systems Software / Data Structures",
         date: "MAY 2025",
+        isoDate: "2025-05-01",
         featured: 72,
         theme: "theme-terracotta",
         image: "/assets/images/file-system-tree.png",
@@ -107,6 +114,7 @@ export const PROJECTS_DATA = [
         category: "software",
         categoryLabel: "Software & Algorithms / Python",
         date: "OCT 2024",
+        isoDate: "2024-10-01",
         featured: 65,
         theme: "theme-crimson",
         image: "/assets/images/connect4.png",
