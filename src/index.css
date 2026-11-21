@@ -79,7 +79,7 @@ body {
   color: var(--text-main);
 
   /* Dynamic background image */
-  background-image: url('/assets/images/kfupm-bg.png');
+  background-image: url('/assets/images/kfupm-bg.webp');
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center center;
@@ -88,7 +88,7 @@ body {
 }
 
 [data-theme="dark"] body {
-  background-image: url('/assets/images/kfupm-night.jpg');
+  background-image: url('/assets/images/kfupm-night.webp');
 }
 
 /* Centered site container */

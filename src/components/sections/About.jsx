@@ -14,7 +14,7 @@ export default function About() {
                 {/* Profile Portrait Card */}
                 <div className={styles.profilePortraitWrap}>
                     <img
-                        src="/assets/images/steveplaceholder.jpg"
+                        src="/assets/images/steveplaceholder.webp"
                         alt="Portrait photo of steve as a placeholder"
                         width="320"
                         height="420"
